@@ -12,8 +12,10 @@ A custom macro deck powered by an Arduino — control media, apps, hotkeys and D
 - Rotary encoder for volume control (turn = volume, press = mute)
 - 1 dedicated media button (play/pause)
 - Automatic Arduino detection — no manual COM port configuration
+- System tray icon with quick access to config and quit
 - Discord integration (mute, deafen, leave channel)
 - CLI configuration tool
+- Windows installer with optional autostart
 
 ---
 
@@ -35,20 +37,15 @@ A custom macro deck powered by an Arduino — control media, apps, hotkeys and D
 
 ### 2. Download ConsoleDeck
 
-Go to the [Releases](../../releases) page and download the latest `consoledeck-vX.X.X.zip`.
+Go to the [Releases](../../releases) page and download the latest version.
 
-Extract the ZIP — you should have:
-
-```
-consoledeck.exe          ← main app (runs in background)
-consoledeck-config.exe   ← configuration tool
-config.json              ← button config (auto-created on first run)
-arduino/                 ← Arduino firmware
-```
+Two options are available:
+- **`ConsoleDeck-Setup-vX.X.X.exe`** — recommended, installs like any Windows app with Start Menu shortcuts and optional autostart
+- **`ConsoleDeck-vX.X.X-portable.zip`** — no installation needed, just extract and run
 
 ### 3. Configure your buttons
 
-Run `consoledeck-config.exe` and follow the prompts to assign actions to each button.
+Run `consoledeck-config.exe` (or open it from the tray icon menu) and follow the prompts to assign actions to each button.
 
 **Available action types:**
 
@@ -68,12 +65,13 @@ Run `consoledeck-config.exe` and follow the prompts to assign actions to each bu
 
 ### 4. Run ConsoleDeck
 
-Double-click `consoledeck.exe`. It will automatically find your Arduino and start listening.
+Double-click `consoledeck.exe`. It will automatically detect your Arduino and start running in the background.
 
-To run it at startup, create a shortcut to `consoledeck.exe` and place it in:
-```
-%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup
-```
+A tray icon will appear in the system tray (bottom right). Right-click it to:
+- **Open Config** — launch the configuration tool
+- **Quit** — stop ConsoleDeck
+
+If you used the installer, you can optionally enable autostart during setup so ConsoleDeck launches automatically with Windows.
 
 ---
 
@@ -90,9 +88,30 @@ To run it at startup, create a shortcut to `consoledeck.exe` and place it in:
 
 ```powershell
 # Install dependencies
-pip install pyserial pypresence requests rich pyinstaller
+pip install pyserial pypresence requests rich pyinstaller pystray pillow
 
-# Build both executables
+# Build both executables (add -Install to install dependencies automatically)
 .\build.ps1
-# Output: dist\consoledeck.exe and dist\consoledeck-config.exe
+
+# Also build the installer (requires Inno Setup: https://jrsoftware.org/isinfo.php)
+.\build.ps1 -Version 1.0.0
 ```
+
+Output: `dist\consoledeck.exe`, `dist\consoledeck-config.exe`, `Output\ConsoleDeck-Setup-1.0.0.exe`
+
+---
+
+## Hardware
+
+Wiring for the Arduino Uno:
+
+| Component | Pin |
+|---|---|
+| Encoder CLK | 5 |
+| Encoder DT | 4 |
+| Encoder SW (mute) | 3 |
+| Button 1–7 | 6, 7, 8, 9, 10, 11, 12 |
+| Button 8–9 | A0, A1 |
+| Media button | 2 |
+
+All buttons are wired with `INPUT_PULLUP` (connect between pin and GND).
