@@ -4,8 +4,14 @@ import threading
 import subprocess
 
 
-def _create_icon_image():
-    from PIL import Image, ImageDraw
+def _load_icon_image():
+    from PIL import Image
+    base = os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else os.path.dirname(os.path.abspath(__file__))
+    ico = os.path.join(base, "ConsoleDeck.ico")
+    if os.path.exists(ico):
+        return Image.open(ico)
+    # fallback: generated icon
+    from PIL import ImageDraw
     size = 64
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
@@ -46,14 +52,19 @@ def main():
         import pystray
         icon = pystray.Icon(
             "consoledeck",
-            _create_icon_image(),
+            _load_icon_image(),
             "ConsoleDeck",
             menu=pystray.Menu(
                 pystray.MenuItem("Open Config", lambda icon, item: _open_config()),
                 pystray.MenuItem("Quit", lambda icon, item: _quit(icon)),
             ),
         )
-        icon.run()
+
+        def _on_ready(icon):
+            icon.visible = True
+            icon.notify("ConsoleDeck läuft im Hintergrund.\nRechtsklick auf das Tray-Icon für Optionen.")
+
+        icon.run(setup=_on_ready)
     except ImportError:
         threading.Event().wait()
 

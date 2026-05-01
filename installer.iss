@@ -11,16 +11,17 @@ SolidCompression=yes
 PrivilegesRequired=lowest
 WizardStyle=modern
 UninstallDisplayName=ConsoleDeck
+SetupIconFile=ConsoleDeck.ico
 
 [Files]
 Source: "dist\consoledeck.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\consoledeck-config.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "config.default.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "ConsoleDeck.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "console_deck_v2_arduino_code\*"; DestDir: "{app}\arduino"; Flags: recursesubdirs ignoreversion
 
 [Icons]
-Name: "{group}\ConsoleDeck"; Filename: "{app}\consoledeck.exe"
-Name: "{group}\ConsoleDeck Config"; Filename: "{app}\consoledeck-config.exe"
+Name: "{group}\ConsoleDeck"; Filename: "{app}\consoledeck.exe"; IconFilename: "{app}\ConsoleDeck.ico"
 Name: "{group}\Uninstall ConsoleDeck"; Filename: "{uninstallexe}"
 
 [Tasks]

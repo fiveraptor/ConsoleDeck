@@ -14,12 +14,14 @@ pyinstaller --onefile --noconsole `
     --hidden-import serial.tools.list_ports `
     --hidden-import pystray._win32 `
     --collect-all PIL `
+    --icon=ConsoleDeck.ico `
     --name consoledeck `
     main.py
 
 Write-Host "Building consoledeck-config.exe ..."
 pyinstaller --onefile `
     --hidden-import serial.tools.list_ports `
+    --icon=ConsoleDeck.ico `
     --name consoledeck-config `
     cli.py
 
