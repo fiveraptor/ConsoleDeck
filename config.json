@@ -1,0 +1,39 @@
+{
+  "BUTTON_1": {
+    "type": "exe",
+    "value": "C:\\Users\\joris\\AppData\\Local\\homeassistant_desktop\\homeassistant-desktop.exe",
+    "focus": "Home Assistant"
+  },
+  "BUTTON_2": {
+    "type": "discord_deafen",
+    "value": ""
+  },
+  "BUTTON_3": {
+    "type": "none",
+    "value": ""
+  },
+  "BUTTON_4": {
+    "type": "none",
+    "value": ""
+  },
+  "BUTTON_5": {
+    "type": "none",
+    "value": ""
+  },
+  "BUTTON_6": {
+    "type": "none",
+    "value": ""
+  },
+  "BUTTON_7": {
+    "type": "discord_mute",
+    "value": ""
+  },
+  "BUTTON_8": {
+    "type": "prev_track",
+    "value": ""
+  },
+  "BUTTON_9": {
+    "type": "next_track",
+    "value": ""
+  }
+}

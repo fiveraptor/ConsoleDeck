@@ -1,0 +1,48 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyserial pypresence requests rich pyinstaller
+
+      - name: Build consoledeck.exe
+        run: |
+          pyinstaller --onefile --noconsole `
+            --hidden-import serial.tools.list_ports `
+            --name consoledeck `
+            main.py
+
+      - name: Build consoledeck-config.exe
+        run: |
+          pyinstaller --onefile `
+            --hidden-import serial.tools.list_ports `
+            --name consoledeck-config `
+            cli.py
+
+      - name: Package release
+        run: |
+          New-Item -ItemType Directory release
+          Copy-Item dist\consoledeck.exe release\
+          Copy-Item dist\consoledeck-config.exe release\
+          Copy-Item config.json release\
+          Copy-Item console_deck_v2_arduino_code -Recurse release\arduino
+          Compress-Archive -Path release\* -DestinationPath "consoledeck-${{ github.ref_name }}.zip"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: consoledeck-*.zip
+          generate_release_notes: true
