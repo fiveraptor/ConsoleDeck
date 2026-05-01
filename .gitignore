@@ -5,6 +5,7 @@ build/
 *.spec
 config.json
 discord_auth.json
+ha_auth.json
 .venv/
 venv/
 .claude/

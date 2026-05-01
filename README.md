@@ -62,6 +62,7 @@ Run `consoledeck-config.exe` (or open it from the tray icon menu) and follow the
 | `discord_mute` | Toggle Discord microphone |
 | `discord_deafen` | Toggle Discord deafen |
 | `discord_leave` | Leave Discord voice channel |
+| `homeassistant` | Control a Home Assistant device (toggle / turn_on / turn_off) |
 
 ### 4. Run ConsoleDeck
 
@@ -72,6 +73,14 @@ A tray icon will appear in the system tray (bottom right). Right-click it to:
 - **Quit** — stop ConsoleDeck
 
 If you used the installer, you can optionally enable autostart during setup so ConsoleDeck launches automatically with Windows.
+
+---
+
+## Home Assistant Integration
+
+1. In Home Assistant: **Profil** (bottom left) → **Sicherheit** → **Long-Lived Access Token erstellen**
+2. Run `consoledeck-config.exe` → **Settings → Home Assistant** and enter your HA URL and the token
+3. When configuring a button, choose **HA** and enter the entity ID (e.g. `light.wohnzimmer`) and the action (`toggle`, `turn_on`, or `turn_off`)
 
 ---
 

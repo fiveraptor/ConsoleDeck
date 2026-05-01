@@ -41,6 +41,7 @@ SCRIPT_DIR = os.path.dirname(sys.executable) if getattr(sys, "frozen", False) el
 CONFIG_FILE = os.path.join(SCRIPT_DIR, "config.json")
 CONFIG_DEFAULT_FILE = os.path.join(SCRIPT_DIR, "config.default.json")
 DISCORD_AUTH_FILE = os.path.join(SCRIPT_DIR, "discord_auth.json")
+HA_AUTH_FILE = os.path.join(SCRIPT_DIR, "ha_auth.json")
 
 _discord_client = None
 _discord_reconnecting = False
@@ -194,6 +195,8 @@ def esegui_azione(azione):
         discord_toggle_deafen()
     elif t == "discord_leave":
         discord_leave_channel()
+    elif t == "homeassistant" and v:
+        ha_call_service(v, azione.get("ha_action", "toggle"))
     else:
         print("No action defined")
 
@@ -261,6 +264,38 @@ def gestisci_mute():
 def gestisci_media():
     simulate_keypress(0xB3)  # VK_MEDIA_PLAY_PAUSE
     print("[DEBUG] Media play/pause triggered")
+
+def load_ha_auth():
+    if os.path.exists(HA_AUTH_FILE):
+        with open(HA_AUTH_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_ha_auth(data):
+    with open(HA_AUTH_FILE, "w") as f:
+        json.dump(data, f, indent=2)
+
+def ha_call_service(entity_id, action):
+    if not requests:
+        print("[HA] requests-Bibliothek fehlt — pip install requests")
+        return
+    auth = load_ha_auth()
+    url = auth.get("url", "").rstrip("/")
+    token = auth.get("token", "")
+    if not url or not token:
+        print("[HA] Nicht konfiguriert — bitte URL und Token in den Einstellungen eintragen.")
+        return
+    domain = entity_id.split(".")[0]
+    try:
+        r = requests.post(
+            f"{url}/api/services/{domain}/{action}",
+            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+            json={"entity_id": entity_id},
+            timeout=5,
+        )
+        print(f"[HA] {action} {entity_id} → {r.status_code}")
+    except Exception as e:
+        print(f"[HA] Fehler: {e}")
 
 def load_discord_auth():
     if os.path.exists(DISCORD_AUTH_FILE):

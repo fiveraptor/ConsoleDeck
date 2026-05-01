@@ -20,21 +20,23 @@ except ImportError:
 SCRIPT_DIR = os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else os.path.dirname(os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(SCRIPT_DIR, "config.json")
 DISCORD_AUTH_FILE = os.path.join(SCRIPT_DIR, "discord_auth.json")
+HA_AUTH_FILE = os.path.join(SCRIPT_DIR, "ha_auth.json")
 
 console = Console()
 
 TYPE_COLOR = {
-    "link":         "cyan",
-    "exe":          "green",
-    "play_pause":   "blue",
-    "next_track":   "blue",
-    "prev_track":   "blue",
-    "stop":         "blue",
-    "mute":         "magenta",
-    "hotkey":       "yellow",
+    "link":           "cyan",
+    "exe":            "green",
+    "play_pause":     "blue",
+    "next_track":     "blue",
+    "prev_track":     "blue",
+    "stop":           "blue",
+    "mute":           "magenta",
+    "hotkey":         "yellow",
     "discord_mute":   "bright_magenta",
     "discord_deafen": "bright_magenta",
     "discord_leave":  "red",
+    "homeassistant":  "bright_yellow",
     "none":           "bright_black",
 }
 TYPE_LABEL = {
@@ -49,6 +51,7 @@ TYPE_LABEL = {
     "discord_mute":   "MUTE",
     "discord_deafen": "DEAF",
     "discord_leave":  "LEAV",
+    "homeassistant":  "HA  ",
     "none":           "NONE",
 }
 
@@ -95,9 +98,10 @@ def cell_text(i, config):
     color = TYPE_COLOR.get(t, "bright_black")
     label = TYPE_LABEL.get(t, "NONE")
 
-    # For exe, prefer the focus hint as the display name if set
     if t == "exe":
         preview = data.get("focus", "") or shorten(v)
+    elif t == "homeassistant":
+        preview = f"{shorten(v, 12)} {data.get('ha_action', 'toggle')}"
     else:
         preview = shorten(v)
 
@@ -178,6 +182,8 @@ def configure_button(key, config):
     console.print("  [bright_magenta bold]d[/bright_magenta bold]  MUTE    Discord Mute/Unmute")
     console.print("  [bright_magenta bold]e[/bright_magenta bold]  DEAF    Discord Deafen/Undeafen")
     console.print("  [red bold]f[/red bold]  LEAV    Discord Voice Channel verlassen")
+    console.print("  [dim]── Home Assistant ──────────────────────────[/dim]")
+    console.print("  [bright_yellow bold]h[/bright_yellow bold]  HA      Home Assistant Gerät steuern")
     console.print("  [dim]───────────────────────────────────────────[/dim]")
     console.print("  [bright_black]9  NONE    No action[/bright_black]")
     console.print("  [bright_black]0  Cancel[/bright_black]")
@@ -185,7 +191,7 @@ def configure_button(key, config):
 
     choice = Prompt.ask(
         "  Type",
-        choices=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "d", "e", "f"],
+        choices=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "d", "e", "f", "h"],
         default="0",
         show_choices=False,
     )
@@ -249,6 +255,24 @@ def configure_button(key, config):
         new_type, new_value = "discord_deafen", ""
     elif choice == "f":
         new_type, new_value = "discord_leave", ""
+    elif choice == "h":
+        new_type = "homeassistant"
+        default_entity = v if t == "homeassistant" else ""
+        default_action = data.get("ha_action", "toggle") if t == "homeassistant" else "toggle"
+        console.print()
+        console.print("  [dim]Entity ID findest du in Home Assistant unter Einstellungen → Geräte & Dienste.[/dim]")
+        console.print("  [dim]Beispiel:  light.wohnzimmer   switch.drucker   input_boolean.modus[/dim]")
+        new_value = Prompt.ask("  Entity ID", default=default_entity).strip()
+        console.print()
+        ha_action = Prompt.ask(
+            "  Aktion",
+            choices=["toggle", "turn_on", "turn_off"],
+            default=default_action,
+        )
+        entry = {"type": new_type, "value": new_value, "ha_action": ha_action}
+        config[key] = entry
+        save_config(config)
+        return config, f"Button {num} saved."
     else:
         new_type, new_value = "none", ""
 
@@ -259,6 +283,63 @@ def configure_button(key, config):
     config[key] = entry
     save_config(config)
     return config, f"Button {num} saved."
+
+
+def load_ha_auth():
+    if os.path.exists(HA_AUTH_FILE):
+        with open(HA_AUTH_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+
+def save_ha_auth(data):
+    with open(HA_AUTH_FILE, "w") as f:
+        json.dump(data, f, indent=2)
+
+
+def configure_homeassistant():
+    auth = load_ha_auth()
+    console.clear()
+    console.print()
+    console.print(Rule("[bold yellow]Home Assistant Integration[/bold yellow]"))
+    console.print()
+
+    url   = auth.get("url", "")
+    token = auth.get("token", "")
+
+    console.print(f"  URL:   [cyan]{url or '[dim]nicht gesetzt[/dim]'}[/cyan]")
+    masked = ("*" * min(len(token), 20) + "…") if token else "[dim]nicht gesetzt[/dim]"
+    console.print(f"  Token: [green]{masked}[/green]")
+    console.print()
+    console.print("  [dim]Long-Lived Access Token erstellen:[/dim]")
+    console.print("  [dim]Home Assistant → Profil (unten links) → Sicherheit → Token erstellen[/dim]")
+    console.print()
+
+    new_url   = Prompt.ask("  URL (z.B. http://homeassistant.local:8123)", default=url).strip().rstrip("/")
+    new_token = Prompt.ask("  Token", default=token, password=True).strip()
+
+    if new_url != url or new_token != token:
+        save_ha_auth({"url": new_url, "token": new_token})
+        return "Home Assistant Einstellungen gespeichert."
+    return None
+
+
+def configure_settings():
+    console.clear()
+    console.print()
+    console.print(Rule("[bold yellow]Einstellungen[/bold yellow]"))
+    console.print()
+    console.print("  [bright_magenta bold]1[/bright_magenta bold]  Discord")
+    console.print("  [bright_yellow bold]2[/bright_yellow bold]  Home Assistant")
+    console.print("  [bright_black]0  Zurück[/bright_black]")
+    console.print()
+
+    choice = Prompt.ask("  Auswahl", choices=["0", "1", "2"], default="0", show_choices=False)
+    if choice == "1":
+        return configure_discord()
+    elif choice == "2":
+        return configure_homeassistant()
+    return None
 
 
 def configure_discord():
@@ -312,7 +393,7 @@ def main():
         if raw == "q":
             break
         elif raw == "s":
-            message = configure_discord()
+            message = configure_settings()
         elif raw.isdigit() and 1 <= int(raw) <= 9:
             config, message = configure_button(f"BUTTON_{raw}", config)
         else:
