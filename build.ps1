@@ -1,9 +1,10 @@
 param(
-    [switch]$Install
+    [switch]$Install,
+    [string]$Version = "dev"
 )
 
 if ($Install) {
-    pip install pyserial pypresence requests rich pyinstaller
+    pip install pyserial pypresence requests rich pyinstaller pystray pillow
 }
 
 Remove-Item -Recurse -Force -ErrorAction SilentlyContinue dist, build, *.spec
@@ -11,6 +12,8 @@ Remove-Item -Recurse -Force -ErrorAction SilentlyContinue dist, build, *.spec
 Write-Host "Building consoledeck.exe ..."
 pyinstaller --onefile --noconsole `
     --hidden-import serial.tools.list_ports `
+    --hidden-import pystray._win32 `
+    --collect-all PIL `
     --name consoledeck `
     main.py
 
@@ -20,5 +23,12 @@ pyinstaller --onefile `
     --name consoledeck-config `
     cli.py
 
+if (Get-Command iscc -ErrorAction SilentlyContinue) {
+    Write-Host "Building installer ..."
+    iscc /DAppVersion=$Version installer.iss
+} else {
+    Write-Host "Inno Setup not found — installer skipped. Install from https://jrsoftware.org/isinfo.php"
+}
+
 Write-Host ""
-Write-Host "Done. Executables are in .\dist\"
+Write-Host "Done. Output in .\dist\"

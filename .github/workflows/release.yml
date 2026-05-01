@@ -17,13 +17,15 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
-        run: pip install pyserial pypresence requests rich pyinstaller
+      - name: Install Python dependencies
+        run: pip install pyserial pypresence requests rich pyinstaller pystray pillow
 
       - name: Build consoledeck.exe
         run: |
           pyinstaller --onefile --noconsole `
             --hidden-import serial.tools.list_ports `
+            --hidden-import pystray._win32 `
+            --collect-all PIL `
             --name consoledeck `
             main.py
 
@@ -34,17 +36,25 @@ jobs:
             --name consoledeck-config `
             cli.py
 
-      - name: Package release
+      - name: Install Inno Setup
+        run: choco install innosetup -y
+
+      - name: Build installer
+        run: iscc /DAppVersion=${{ github.ref_name }} installer.iss
+
+      - name: Package portable zip
         run: |
           New-Item -ItemType Directory release
           Copy-Item dist\consoledeck.exe release\
           Copy-Item dist\consoledeck-config.exe release\
           Copy-Item config.default.json release\config.json
           Copy-Item console_deck_v2_arduino_code -Recurse release\arduino
-          Compress-Archive -Path release\* -DestinationPath "consoledeck-${{ github.ref_name }}.zip"
+          Compress-Archive -Path release\* -DestinationPath "ConsoleDeck-${{ github.ref_name }}-portable.zip"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: consoledeck-*.zip
+          files: |
+            ConsoleDeck-*-portable.zip
+            Output\ConsoleDeck-Setup-*.exe
           generate_release_notes: true
