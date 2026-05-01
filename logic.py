@@ -39,6 +39,7 @@ def find_arduino_port():
 
 SCRIPT_DIR = os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else os.path.dirname(os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(SCRIPT_DIR, "config.json")
+CONFIG_DEFAULT_FILE = os.path.join(SCRIPT_DIR, "config.default.json")
 DISCORD_AUTH_FILE = os.path.join(SCRIPT_DIR, "discord_auth.json")
 
 _discord_client = None
@@ -52,19 +53,17 @@ last_volume_value = 0
 is_muted = False
 
 def load_config():
-    print(f"[DEBUG] Loading config from: {CONFIG_FILE}")
-    if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, "r") as f:
-            config = json.load(f)
-            print("[DEBUG] Config loaded:", json.dumps(config, indent=2))
-            return config
-    else:
-        print("[DEBUG] Config file not found, creating default config.")
-        config = {}
-        for i in range(1, 10):
-            config[f"BUTTON_{i}"] = {"type": "none", "value": ""}
-        config["BUTTON_1"] = {"type": "link", "value": "https://www.youtube.com"}
-        return config
+    if not os.path.exists(CONFIG_FILE):
+        if os.path.exists(CONFIG_DEFAULT_FILE):
+            import shutil
+            shutil.copy(CONFIG_DEFAULT_FILE, CONFIG_FILE)
+            print("[INFO] config.json aus config.default.json erstellt.")
+        else:
+            config = {f"BUTTON_{i}": {"type": "none", "value": ""} for i in range(1, 10)}
+            save_config(config)
+            print("[INFO] Leere config.json erstellt.")
+    with open(CONFIG_FILE, "r") as f:
+        return json.load(f)
 
 def save_config(config):
     with open(CONFIG_FILE, "w") as f:

@@ -3,6 +3,7 @@ __pycache__/
 dist/
 build/
 *.spec
+config.json
 discord_auth.json
 .venv/
 venv/

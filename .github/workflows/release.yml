@@ -37,7 +37,7 @@ jobs:
           New-Item -ItemType Directory release
           Copy-Item dist\consoledeck.exe release\
           Copy-Item dist\consoledeck-config.exe release\
-          Copy-Item config.json release\
+          Copy-Item config.default.json release\config.json
           Copy-Item console_deck_v2_arduino_code -Recurse release\arduino
           Compress-Archive -Path release\* -DestinationPath "consoledeck-${{ github.ref_name }}.zip"
 
