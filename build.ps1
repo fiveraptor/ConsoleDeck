@@ -1,36 +1,33 @@
 param(
-    [switch]$Install,
     [string]$Version = "dev"
 )
 
-if ($Install) {
-    pip install pyserial pypresence requests rich pyinstaller pystray pillow
-}
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
 
-Remove-Item -Recurse -Force -ErrorAction SilentlyContinue dist, build, *.spec
+$proj = "ConsoleDeckApp\ConsoleDeck\ConsoleDeck.csproj"
 
-Write-Host "Building consoledeck.exe ..."
-pyinstaller --onefile --noconsole `
-    --hidden-import serial.tools.list_ports `
-    --hidden-import pystray._win32 `
-    --collect-all PIL `
-    --icon=ConsoleDeck.ico `
-    --name consoledeck `
-    main.py
+Write-Host "==> Building ConsoleDeck $Version ..."
+dotnet publish $proj `
+    -c Release `
+    -r win-x64 `
+    --self-contained `
+    -p:PublishSingleFile=true `
+    -p:EnableCompressionInSingleFile=true `
+    -p:Version=$Version `
+    -o dist
 
-Write-Host "Building consoledeck-config.exe ..."
-pyinstaller --onefile `
-    --hidden-import serial.tools.list_ports `
-    --icon=ConsoleDeck.ico `
-    --name consoledeck-config `
-    cli.py
+Write-Host ""
+Write-Host "==> Built: dist\ConsoleDeck.exe  ($([Math]::Round((Get-Item dist\ConsoleDeck.exe).Length / 1MB, 1)) MB)"
+Write-Host ""
 
 if (Get-Command iscc -ErrorAction SilentlyContinue) {
-    Write-Host "Building installer ..."
+    Write-Host "==> Building installer ..."
     iscc /DAppVersion=$Version installer.iss
+    Write-Host "==> Installer: Output\ConsoleDeck-Setup-$Version.exe"
 } else {
-    Write-Host "Inno Setup not found — installer skipped. Install from https://jrsoftware.org/isinfo.php"
+    Write-Host "[skip] Inno Setup not found — https://jrsoftware.org/isinfo.php"
 }
 
 Write-Host ""
-Write-Host "Done. Output in .\dist\"
+Write-Host "Done."

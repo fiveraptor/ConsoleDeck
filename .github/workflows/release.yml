@@ -10,49 +10,37 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: write
+
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-dotnet@v4
         with:
-          python-version: '3.11'
+          dotnet-version: '8.0.x'
 
-      - name: Install Python dependencies
-        run: pip install pyserial pypresence requests rich pyinstaller pystray pillow
-
-      - name: Build consoledeck.exe
+      - name: Publish
         run: |
-          pyinstaller --onefile --noconsole `
-            --hidden-import serial.tools.list_ports `
-            --hidden-import pystray._win32 `
-            --collect-all PIL `
-            --icon=ConsoleDeck.ico `
-            --name consoledeck `
-            main.py
-
-      - name: Build consoledeck-config.exe
-        run: |
-          pyinstaller --onefile `
-            --hidden-import serial.tools.list_ports `
-            --icon=ConsoleDeck.ico `
-            --name consoledeck-config `
-            cli.py
+          dotnet publish ConsoleDeckApp\ConsoleDeck\ConsoleDeck.csproj `
+            -c Release -r win-x64 --self-contained `
+            -p:PublishSingleFile=true `
+            -p:EnableCompressionInSingleFile=true `
+            -p:Version=${{ github.ref_name }} `
+            -o dist
 
       - name: Install Inno Setup
-        run: choco install innosetup -y
+        run: choco install innosetup -y --no-progress
 
       - name: Build installer
         run: iscc /DAppVersion=${{ github.ref_name }} installer.iss
 
       - name: Package portable zip
         run: |
-          New-Item -ItemType Directory release
-          Copy-Item dist\consoledeck.exe release\
-          Copy-Item dist\consoledeck-config.exe release\
-          Copy-Item config.default.json release\config.json
-          Copy-Item ConsoleDeck.ico release\
+          New-Item -ItemType Directory release | Out-Null
+          Copy-Item dist\ConsoleDeck.exe      release\
+          Copy-Item config.default.json        release\config.json
           Copy-Item console_deck_v2_arduino_code -Recurse release\arduino
-          Compress-Archive -Path release\* -DestinationPath "ConsoleDeck-${{ github.ref_name }}-portable.zip"
+          Compress-Archive -Path release\* `
+            -DestinationPath "ConsoleDeck-${{ github.ref_name }}-portable.zip"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
