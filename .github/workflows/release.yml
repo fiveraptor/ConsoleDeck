@@ -28,8 +28,6 @@ jobs:
         run: |
           dotnet publish ConsoleDeckApp\ConsoleDeck\ConsoleDeck.csproj `
             -c Release -r win-x64 --self-contained `
-            -p:PublishSingleFile=true `
-            -p:EnableCompressionInSingleFile=true `
             -p:Version=${{ steps.ver.outputs.VERSION }} `
             -o dist
 
@@ -42,7 +40,7 @@ jobs:
       - name: Package portable zip
         run: |
           New-Item -ItemType Directory release | Out-Null
-          Copy-Item dist\ConsoleDeck.exe      release\
+          Copy-Item dist\*                     release\ -Recurse
           Copy-Item config.default.json        release\config.json
           Copy-Item console_deck_v2_arduino_code -Recurse release\arduino
           Compress-Archive -Path release\* `

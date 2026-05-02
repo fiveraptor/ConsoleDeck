@@ -14,7 +14,7 @@ UninstallDisplayName=ConsoleDeck
 SetupIconFile=ConsoleDeck.ico
 
 [Files]
-Source: "dist\ConsoleDeck.exe";      DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\*";                      DestDir: "{app}"; Flags: recursesubdirs ignoreversion
 Source: "config.default.json";        DestDir: "{app}"; Flags: ignoreversion
 Source: "console_deck_v2_arduino_code\*"; DestDir: "{app}\arduino"; Flags: recursesubdirs ignoreversion
 
