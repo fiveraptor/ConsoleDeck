@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName>ConsoleDeck</AssemblyName>
+    <NoWarn>NU1701</NoWarn>
+    <RootNamespace>ConsoleDeck</RootNamespace>
+    <ApplicationIcon>Assets\ConsoleDeck.ico</ApplicationIcon>
+    <AssemblyTitle>ConsoleDeck</AssemblyTitle>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WPF-UI" Version="3.*" />
+    <PackageReference Include="H.NotifyIcon.Wpf" Version="2.*" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
+    <PackageReference Include="System.IO.Ports" Version="8.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\ConsoleDeck.ico" />
+  </ItemGroup>
+
+</Project>
