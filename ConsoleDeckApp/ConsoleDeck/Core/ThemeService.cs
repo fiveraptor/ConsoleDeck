@@ -1,5 +1,7 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
 using Microsoft.Win32;
 using Wpf.Ui.Appearance;
 
@@ -39,6 +41,19 @@ public static class ThemeService
 
         ThemeChanged?.Invoke();
     }
+
+    [DllImport("dwmapi.dll")]
+    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int value, int size);
+
+    public static void ApplyTitleBar(IntPtr hwnd)
+    {
+        if (hwnd == IntPtr.Zero) return;
+        int dark = IsDark ? 1 : 0;
+        DwmSetWindowAttribute(hwnd, 20, ref dark, sizeof(int));
+    }
+
+    public static void ApplyTitleBar(Window window)
+        => ApplyTitleBar(new WindowInteropHelper(window).Handle);
 
     private static bool IsWindowsLight()
     {

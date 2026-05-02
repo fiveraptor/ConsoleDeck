@@ -1,0 +1,36 @@
+<Window x:Class="ConsoleDeck.Views.ConfirmDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Bestätigung" Width="340" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{DynamicResource BrPageBg}"
+        ShowInTaskbar="False">
+  <Grid Margin="24,20,24,20">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="10"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="20"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <TextBlock x:Name="TitleText" Grid.Row="0"
+               FontSize="14" FontWeight="SemiBold"
+               Foreground="{DynamicResource BrTextPrimary}"/>
+
+    <TextBlock x:Name="MessageText" Grid.Row="2"
+               FontSize="13" TextWrapping="Wrap"
+               Foreground="{DynamicResource BrTextSecondary}"/>
+
+    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+      <ui:Button x:Name="BtnCancel" Appearance="Secondary"
+                 Content="Abbrechen" MinWidth="96" Height="30"
+                 Margin="0,0,8,0" Click="Cancel_Click"/>
+      <ui:Button x:Name="BtnConfirm" Appearance="Danger"
+                 Content="Löschen" MinWidth="80" Height="30"
+                 Click="Confirm_Click"/>
+    </StackPanel>
+  </Grid>
+</Window>

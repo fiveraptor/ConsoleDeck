@@ -9,6 +9,37 @@
         Closing="Window_Closing">
 
   <Window.Resources>
+    <Style x:Key="SidebarIconBtn" TargetType="Button">
+      <Setter Property="Width"  Value="26"/>
+      <Setter Property="Height" Value="26"/>
+      <Setter Property="Margin" Value="2,0,0,0"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Bd" CornerRadius="4" Background="Transparent" Width="26" Height="26">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                TextElement.Foreground="{DynamicResource BrTextSecondary}"
+                                TextElement.FontSize="{TemplateBinding FontSize}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="#1A808080"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="#2A808080"/>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
     <!-- NavItem: triggers use Style.Triggers so DynamicResource works correctly -->
     <Style x:Key="NavItem" TargetType="ListBoxItem">
       <Setter Property="Background" Value="Transparent"/>
@@ -49,6 +80,7 @@
     <Grid Grid.Column="0" Background="{DynamicResource BrSidebarBg}">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
         <RowDefinition Height="*"/>
         <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
@@ -69,8 +101,32 @@
         </StackPanel>
       </Border>
 
+      <!-- Profile selector -->
+      <Border Grid.Row="1" Padding="10,7"
+              BorderBrush="{DynamicResource BrDivider}" BorderThickness="0,0,0,1">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <ComboBox x:Name="ProfileCombo" Grid.Column="0"
+                    FontSize="12" Height="30" Padding="8,4"
+                    Margin="0,0,4,0"
+                    SelectionChanged="ProfileCombo_SelectionChanged"/>
+          <Button Grid.Column="1" Content="+" Style="{StaticResource SidebarIconBtn}"
+                  ToolTip="Neues Profil" Click="BtnAddProfile_Click"/>
+          <Button Grid.Column="2" Content="✎" Style="{StaticResource SidebarIconBtn}"
+                  ToolTip="Umbenennen" Click="BtnRenameProfile_Click"/>
+          <Button x:Name="BtnDeleteProfile" Grid.Column="3" Content="✕"
+                  Style="{StaticResource SidebarIconBtn}"
+                  ToolTip="Löschen" Click="BtnDeleteProfile_Click"/>
+        </Grid>
+      </Border>
+
       <!-- Nav -->
-      <ListBox x:Name="NavList" Grid.Row="1" Background="Transparent" BorderThickness="0"
+      <ListBox x:Name="NavList" Grid.Row="2" Background="Transparent" BorderThickness="0"
                Margin="0,8,0,0" VirtualizingPanel.IsVirtualizing="False"
                SelectionChanged="NavList_SelectionChanged"
                ItemContainerStyle="{StaticResource NavItem}">
@@ -89,7 +145,7 @@
       </ListBox>
 
       <!-- Connection status -->
-      <Border Grid.Row="2" Padding="16,14"
+      <Border Grid.Row="3" Padding="16,14"
               BorderBrush="{DynamicResource BrDivider}" BorderThickness="0,1,0,0">
         <StackPanel>
           <StackPanel Orientation="Horizontal" Margin="0,0,0,6">

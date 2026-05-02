@@ -1,5 +1,8 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
+using ConsoleDeck.Core;
 using ConsoleDeck.Models;
 using Microsoft.Win32;
 
@@ -155,4 +158,19 @@ public partial class ButtonEditWindow : Window
         DialogResult = false;
         Close();
     }
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        ThemeService.ApplyTitleBar(this);
+        ThemeService.ThemeChanged += RefreshTitleBar;
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        ThemeService.ThemeChanged -= RefreshTitleBar;
+        base.OnClosed(e);
+    }
+
+    private void RefreshTitleBar() => Dispatcher.Invoke(() => ThemeService.ApplyTitleBar(this));
 }

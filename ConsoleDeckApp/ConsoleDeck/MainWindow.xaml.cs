@@ -27,27 +27,19 @@ public partial class MainWindow : Window
         OnArduinoStatus(App.Serial.Status);
         OnDiscordStatus(App.Discord.Status);
 
+        App.Config.ProfileListChanged += () => Dispatcher.Invoke(LoadProfiles);
+        LoadProfiles();
+
         ContentFrame.Navigate(_dashPage);
         NavList.SelectedIndex = 0;
     }
-
-    [DllImport("dwmapi.dll")]
-    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int value, int size);
 
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
         var hwnd = new WindowInteropHelper(this).Handle;
         HwndSource.FromHwnd(hwnd)?.AddHook(WndProc);
-        ApplyTitleBarTheme(hwnd);
-    }
-
-    private void ApplyTitleBarTheme(IntPtr hwnd = default)
-    {
-        if (hwnd == IntPtr.Zero) hwnd = new WindowInteropHelper(this).Handle;
-        if (hwnd == IntPtr.Zero) return;
-        int dark = ThemeService.IsDark ? 1 : 0;
-        DwmSetWindowAttribute(hwnd, 20, ref dark, sizeof(int));
+        ThemeService.ApplyTitleBar(hwnd);
     }
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -63,10 +55,71 @@ public partial class MainWindow : Window
 
     private void RefreshStatusColors()
     {
-        Dispatcher.Invoke(ApplyTitleBarTheme);
+        Dispatcher.Invoke(() => ThemeService.ApplyTitleBar(this));
         OnArduinoStatus(App.Serial.Status);
         OnDiscordStatus(App.Discord.Status);
     }
+
+    // ── Profile management ──────────────────────────────────────────────────
+
+    private bool _updatingProfiles;
+
+    private void LoadProfiles()
+    {
+        _updatingProfiles = true;
+        var profiles = App.Config.GetProfiles();
+        if (profiles.Count == 0) { App.Config.CreateProfile("Default"); profiles = App.Config.GetProfiles(); }
+        ProfileCombo.ItemsSource = profiles;
+        ProfileCombo.SelectedItem = App.Config.GetActiveProfile();
+        BtnDeleteProfile.IsEnabled = profiles.Count > 1;
+        _updatingProfiles = false;
+    }
+
+    private void ProfileCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_updatingProfiles) return;
+        if (ProfileCombo.SelectedItem is string name && name != App.Config.GetActiveProfile())
+            App.Config.SetActiveProfile(name);
+    }
+
+    private void BtnAddProfile_Click(object sender, RoutedEventArgs e)
+    {
+        var dlg = new Views.ProfileNameDialog("Neues Profil", "") { Owner = this };
+        if (dlg.ShowDialog() != true || string.IsNullOrWhiteSpace(dlg.ProfileName)) return;
+        var name = dlg.ProfileName;
+        App.Config.CreateProfile(name);
+        App.Config.SetActiveProfile(name);
+        LoadProfiles();
+        ShowToast($"Profil \"{name}\" erstellt.");
+    }
+
+    private void BtnRenameProfile_Click(object sender, RoutedEventArgs e)
+    {
+        var current = App.Config.GetActiveProfile();
+        var dlg = new Views.ProfileNameDialog("Profil umbenennen", current) { Owner = this };
+        if (dlg.ShowDialog() != true || string.IsNullOrWhiteSpace(dlg.ProfileName)) return;
+        var newName = dlg.ProfileName;
+        if (newName == current) return;
+        App.Config.RenameProfile(current, newName);
+        LoadProfiles();
+        ShowToast($"Profil in \"{newName}\" umbenannt.");
+    }
+
+    private void BtnDeleteProfile_Click(object sender, RoutedEventArgs e)
+    {
+        var profiles = App.Config.GetProfiles();
+        if (profiles.Count <= 1) { ShowToast("Das letzte Profil kann nicht gelöscht werden."); return; }
+        var current = App.Config.GetActiveProfile();
+        var dlg = new Views.ConfirmDialog("Profil löschen", $"Profil \"{current}\" wirklich löschen?") { Owner = this };
+        if (dlg.ShowDialog() != true) return;
+        var next = profiles.First(p => p != current);
+        App.Config.SetActiveProfile(next);
+        App.Config.DeleteProfile(current);
+        LoadProfiles();
+        ShowToast($"Profil \"{current}\" gelöscht.");
+    }
+
+    // ───────────────────────────────────────────────────────────────────────
 
     private void NavList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
