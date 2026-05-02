@@ -147,7 +147,7 @@
           <PasswordBox x:Name="PbDiscordSecret" Style="{StaticResource PassInput}"/>
 
           <TextBlock Style="{StaticResource Hint}"
-                     Text="Client ID und Secret unter discord.com/developers/applications → deine App → OAuth2.&#x0a;Redirect URI in der Discord App eintragen: http://localhost"/>
+                     Text="Client ID und Secret unter discord.com/developers/applications → deine App → OAuth2.&#x0a;Redirect URI eintragen: http://localhost&#x0a;Nach dem Speichern erscheint ein Autorisierungs-Popup in Discord — bestätigen."/>
 
           <Button Content="Speichern" Style="{StaticResource AccentBtn}"
                   HorizontalAlignment="Right" Click="SaveDiscord_Click"/>

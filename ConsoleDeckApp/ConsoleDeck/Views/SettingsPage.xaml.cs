@@ -58,19 +58,27 @@ public partial class SettingsPage : Page
 
     private void SaveDiscord_Click(object sender, RoutedEventArgs e)
     {
-        var existing = App.Config.LoadDiscordAuth();
-        var newId = TbDiscordId.Text.Trim();
+        var existing  = App.Config.LoadDiscordAuth();
+        var newId     = TbDiscordId.Text.Trim();
         var newSecret = PbDiscordSecret.Password;
-        var changed = existing.ClientId != newId || existing.ClientSecret != newSecret;
-        existing.ClientId = newId;
+        var changed   = existing.ClientId != newId || existing.ClientSecret != newSecret;
+        existing.ClientId     = newId;
         existing.ClientSecret = newSecret;
         if (changed)
         {
-            existing.AccessToken = null;
+            existing.AccessToken  = null;
             existing.RefreshToken = null;
         }
         App.Config.SaveDiscordAuth(existing);
-        ShowToast("Discord-Einstellungen gespeichert.");
+        ShowToast("Discord-Einstellungen gespeichert. Discord-Popup bestätigen…");
+
+        if (!string.IsNullOrEmpty(newId))
+        {
+            App.Discord.Disconnect();
+            var auth = App.Config.LoadDiscordAuth();
+            _ = App.Discord.ConnectAsync(auth, allowOAuthFlow: true);
+            App.Discord.StartWatchdog(auth);
+        }
     }
 
     private void SaveHa_Click(object sender, RoutedEventArgs e)

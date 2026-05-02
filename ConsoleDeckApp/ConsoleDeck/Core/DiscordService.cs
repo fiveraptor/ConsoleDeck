@@ -16,8 +16,11 @@ public class DiscordService
 
     private DiscordIpcClient? _client;
     private CancellationTokenSource? _watchdogCts;
+    private Action<DiscordAuth>? _saveCallback;
 
-    public async Task<bool> ConnectAsync(DiscordAuth auth)
+    public void SetSaveCallback(Action<DiscordAuth> save) => _saveCallback = save;
+
+    public async Task<bool> ConnectAsync(DiscordAuth auth, bool allowOAuthFlow = false)
     {
         if (string.IsNullOrEmpty(auth.ClientId)) return false;
 
@@ -48,6 +51,26 @@ public class DiscordService
                 {
                     if (await client.AuthenticateAsync(token))
                     {
+                        _saveCallback?.Invoke(auth);
+                        _client = client;
+                        SetStatus(DiscordStatus.Connected);
+                        return true;
+                    }
+                }
+            }
+
+            // No usable tokens — ask Discord to authorize via the RPC popup
+            if (allowOAuthFlow && !string.IsNullOrEmpty(auth.ClientSecret))
+            {
+                var code = await client.AuthorizeAsync(auth.ClientId);
+                if (code != null)
+                {
+                    var tokens = await ExchangeCodeAsync(auth, code);
+                    if (tokens.HasValue && await client.AuthenticateAsync(tokens.Value.AccessToken))
+                    {
+                        auth.AccessToken  = tokens.Value.AccessToken;
+                        auth.RefreshToken = tokens.Value.RefreshToken;
+                        _saveCallback?.Invoke(auth);
                         _client = client;
                         SetStatus(DiscordStatus.Connected);
                         return true;
@@ -122,7 +145,7 @@ public class DiscordService
         });
     }
 
-    private static async Task<string?> RefreshTokenAsync(DiscordAuth auth)
+    private async Task<string?> RefreshTokenAsync(DiscordAuth auth)
     {
         try
         {
@@ -130,9 +153,9 @@ public class DiscordService
             var resp = await http.PostAsync("https://discord.com/api/oauth2/token",
                 new FormUrlEncodedContent(new Dictionary<string, string>
                 {
-                    ["client_id"] = auth.ClientId,
-                    ["client_secret"] = auth.ClientSecret,
-                    ["grant_type"] = "refresh_token",
+                    ["client_id"]     = auth.ClientId,
+                    ["client_secret"] = auth.ClientSecret!,
+                    ["grant_type"]    = "refresh_token",
                     ["refresh_token"] = auth.RefreshToken!,
                 }));
             var doc = JsonDocument.Parse(await resp.Content.ReadAsStringAsync());
@@ -142,6 +165,34 @@ public class DiscordService
                 if (doc.RootElement.TryGetProperty("refresh_token", out var rt))
                     auth.RefreshToken = rt.GetString();
                 return auth.AccessToken;
+            }
+        }
+        catch { }
+        return null;
+    }
+
+    private static async Task<(string AccessToken, string? RefreshToken)?> ExchangeCodeAsync(DiscordAuth auth, string code)
+    {
+        try
+        {
+            using var http = new HttpClient();
+            var resp = await http.PostAsync("https://discord.com/api/oauth2/token",
+                new FormUrlEncodedContent(new Dictionary<string, string>
+                {
+                    ["client_id"]     = auth.ClientId,
+                    ["client_secret"] = auth.ClientSecret!,
+                    ["grant_type"]    = "authorization_code",
+                    ["code"]          = code,
+                    ["redirect_uri"]  = "http://localhost",
+                }));
+            var doc = JsonDocument.Parse(await resp.Content.ReadAsStringAsync());
+            if (doc.RootElement.TryGetProperty("access_token", out var tok))
+            {
+                var accessToken   = tok.GetString()!;
+                string? refreshToken = null;
+                if (doc.RootElement.TryGetProperty("refresh_token", out var rt))
+                    refreshToken = rt.GetString();
+                return (accessToken, refreshToken);
             }
         }
         catch { }
@@ -191,6 +242,23 @@ internal class DiscordIpcClient : IDisposable
         catch { return false; }
     }
 
+    public async Task<string?> AuthorizeAsync(string clientId)
+    {
+        try
+        {
+            var resp = await SendCommandAsync("AUTHORIZE", new
+            {
+                client_id = clientId,
+                scopes    = new[] { "rpc", "rpc.voice.read", "rpc.voice.write" },
+            });
+            if (resp.TryGetProperty("data", out var data) &&
+                data.TryGetProperty("code", out var code))
+                return code.GetString();
+        }
+        catch { }
+        return null;
+    }
+
     public async Task<JsonElement> GetVoiceSettingsAsync()
         => await SendCommandAsync("GET_VOICE_SETTINGS", new { });
 
@@ -224,9 +292,9 @@ internal class DiscordIpcClient : IDisposable
 
     private async Task WriteFrameAsync(int opcode, object data)
     {
-        var json = JsonSerializer.Serialize(data);
+        var json    = JsonSerializer.Serialize(data);
         var payload = Encoding.UTF8.GetBytes(json);
-        var header = new byte[8];
+        var header  = new byte[8];
         BitConverter.TryWriteBytes(header.AsSpan(0), opcode);
         BitConverter.TryWriteBytes(header.AsSpan(4), payload.Length);
         await _pipe!.WriteAsync(header);
@@ -239,7 +307,7 @@ internal class DiscordIpcClient : IDisposable
         var header = new byte[8];
         await _pipe!.ReadExactlyAsync(header);
         var length = BitConverter.ToInt32(header, 4);
-        var data = new byte[length];
+        var data   = new byte[length];
         await _pipe.ReadExactlyAsync(data);
         return JsonDocument.Parse(data).RootElement.Clone();
     }

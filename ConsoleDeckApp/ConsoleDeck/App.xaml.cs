@@ -56,6 +56,7 @@ public partial class App : Application
         Serial.Start();
         Serial.MessageReceived += OnSerialMessage;
 
+        Discord.SetSaveCallback(a => Config.SaveDiscordAuth(a));
         var auth = Config.LoadDiscordAuth();
         if (!string.IsNullOrEmpty(auth.ClientId))
         {
