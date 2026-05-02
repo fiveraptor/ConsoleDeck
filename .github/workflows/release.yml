@@ -18,20 +18,26 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Extract version
+        id: ver
+        run: |
+          $v = "${{ github.ref_name }}" -replace '^v', ''
+          echo "VERSION=$v" >> $env:GITHUB_OUTPUT
+
       - name: Publish
         run: |
           dotnet publish ConsoleDeckApp\ConsoleDeck\ConsoleDeck.csproj `
             -c Release -r win-x64 --self-contained `
             -p:PublishSingleFile=true `
             -p:EnableCompressionInSingleFile=true `
-            -p:Version=${{ github.ref_name }} `
+            -p:Version=${{ steps.ver.outputs.VERSION }} `
             -o dist
 
       - name: Install Inno Setup
         run: choco install innosetup -y --no-progress
 
       - name: Build installer
-        run: iscc /DAppVersion=${{ github.ref_name }} installer.iss
+        run: iscc /DAppVersion=${{ steps.ver.outputs.VERSION }} installer.iss
 
       - name: Package portable zip
         run: |
@@ -40,7 +46,7 @@ jobs:
           Copy-Item config.default.json        release\config.json
           Copy-Item console_deck_v2_arduino_code -Recurse release\arduino
           Compress-Archive -Path release\* `
-            -DestinationPath "ConsoleDeck-${{ github.ref_name }}-portable.zip"
+            -DestinationPath "ConsoleDeck-${{ steps.ver.outputs.VERSION }}-portable.zip"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
