@@ -3,30 +3,44 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:vm="clr-namespace:ConsoleDeck.ViewModels"
+      Background="Transparent"
       Title="Dashboard">
 
   <Page.Resources>
-    <Style x:Key="ButtonCardStyle" TargetType="Button">
-      <Setter Property="Background" Value="#1E1E1E"/>
-      <Setter Property="BorderBrush" Value="#333333"/>
+    <Style x:Key="CardBtn" TargetType="Button">
+      <Setter Property="Background" Value="#18181E"/>
+      <Setter Property="BorderBrush" Value="#24242E"/>
       <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="Button">
-            <Border Background="{TemplateBinding Background}"
+            <Border x:Name="Bd"
+                    Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="8">
-              <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    CornerRadius="12">
+              <Grid>
+                <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <!-- Edit hint shown on hover -->
+                <Border x:Name="EditHint" CornerRadius="0,0,12,12"
+                        Background="#0E0E1A" VerticalAlignment="Bottom"
+                        Padding="0,8" Opacity="0">
+                  <TextBlock Text="✎  bearbeiten" FontSize="11" Foreground="#4A80F0"
+                             HorizontalAlignment="Center" FontWeight="Medium"/>
+                </Border>
+              </Grid>
             </Border>
             <ControlTemplate.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#2A2A2A"/>
-                <Setter Property="BorderBrush" Value="#555555"/>
+                <Setter TargetName="Bd" Property="Background" Value="#1D1D25"/>
+                <Setter TargetName="Bd" Property="BorderBrush" Value="#4A80F0"/>
+                <Setter TargetName="EditHint" Property="Opacity" Value="1"/>
               </Trigger>
               <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="#333333"/>
+                <Setter TargetName="Bd" Property="Background" Value="#16161E"/>
+                <Setter TargetName="Bd" Property="BorderBrush" Value="#3A70E0"/>
               </Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>
@@ -35,17 +49,23 @@
     </Style>
   </Page.Resources>
 
-  <Grid Margin="24">
+  <Grid Margin="30,26,30,24">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
+      <RowDefinition Height="18"/>
       <RowDefinition Height="*"/>
       <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
 
-    <TextBlock Grid.Row="0" Text="Buttons" FontSize="20" FontWeight="SemiBold"
-               Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,0,20"/>
+    <!-- Header -->
+    <StackPanel Grid.Row="0">
+      <TextBlock Text="Dashboard" FontSize="22" FontWeight="Bold" Foreground="White"/>
+      <TextBlock Text="9 konfigurierbare Tasten — klicken zum Bearbeiten"
+                 FontSize="12" Foreground="#707080" Margin="0,4,0,0"/>
+    </StackPanel>
 
-    <ItemsControl Grid.Row="1" ItemsSource="{Binding Buttons}">
+    <!-- Button grid -->
+    <ItemsControl Grid.Row="2" ItemsSource="{Binding Buttons}">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
           <UniformGrid Columns="3" Rows="3"/>
@@ -53,39 +73,51 @@
       </ItemsControl.ItemsPanel>
       <ItemsControl.ItemTemplate>
         <DataTemplate DataType="{x:Type vm:ButtonViewModel}">
-          <Button Style="{StaticResource ButtonCardStyle}"
+          <Button Style="{StaticResource CardBtn}"
                   Margin="6"
-                  MinHeight="110"
+                  MinHeight="126"
                   Click="ButtonCard_Click"
                   Tag="{Binding Number}">
-            <Grid Margin="14,12">
+            <Grid>
               <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="28"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="36"/>
               </Grid.RowDefinitions>
 
-              <TextBlock Grid.Row="0" Text="{Binding Number}"
-                         FontSize="11" Foreground="#666666" FontWeight="Medium"/>
+              <!-- Button number -->
+              <TextBlock Grid.Row="0"
+                         Text="{Binding Number, StringFormat='B{0}'}"
+                         FontSize="10" FontWeight="Bold" Foreground="#606070"
+                         Margin="14,10,0,0" VerticalAlignment="Top"/>
 
-              <Border Grid.Row="1" Background="{Binding TypeBrush}" CornerRadius="4"
-                      Padding="6,3" HorizontalAlignment="Left" Margin="0,8,0,8">
+              <!-- Type badge -->
+              <Border Grid.Row="1" Background="{Binding TypeBrush}" CornerRadius="6"
+                      Padding="12,5" HorizontalAlignment="Center" VerticalAlignment="Center"
+                      Margin="12,0">
                 <TextBlock Text="{Binding TypeLabel}" FontSize="11" FontWeight="Bold"
                            Foreground="White"/>
               </Border>
 
-              <TextBlock Grid.Row="2" Text="{Binding Preview}"
-                         FontSize="12" Foreground="#AAAAAA"
+              <!-- Preview text -->
+              <TextBlock Grid.Row="2"
+                         Text="{Binding Preview}"
+                         FontSize="11" Foreground="#8888A0"
                          TextTrimming="CharacterEllipsis"
-                         MaxWidth="160"/>
+                         TextAlignment="Center"
+                         HorizontalAlignment="Center"
+                         MaxWidth="170"
+                         Margin="12,6,12,0"/>
             </Grid>
           </Button>
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>
 
-    <TextBlock Grid.Row="2" Margin="0,16,0,0"
-               Text="Media-Button (physisch) → immer Play/Pause, nicht konfigurierbar"
-               FontSize="11" Foreground="#555555" HorizontalAlignment="Center"/>
+    <!-- Footer note -->
+    <TextBlock Grid.Row="3" Margin="6,14,0,0"
+               Text="⌨  Media-Taste (physisch) → immer Play/Pause, nicht konfigurierbar"
+               FontSize="11" Foreground="#606070"/>
   </Grid>
 </Page>

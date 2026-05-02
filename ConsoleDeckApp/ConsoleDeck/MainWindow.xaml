@@ -2,34 +2,35 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        Title="ConsoleDeck" Width="780" Height="600"
-        MinWidth="640" MinHeight="480"
+        Title="ConsoleDeck" Width="980" Height="720"
+        MinWidth="740" MinHeight="520"
         WindowStartupLocation="CenterScreen"
-        Background="#141414"
+        Background="#0E0E11"
         Closing="Window_Closing">
 
   <Window.Resources>
-    <Style x:Key="NavItemStyle" TargetType="ListBoxItem">
+    <Style x:Key="NavItem" TargetType="ListBoxItem">
       <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="Foreground" Value="#AAAAAA"/>
-      <Setter Property="Padding" Value="12,10"/>
-      <Setter Property="Margin" Value="4,2"/>
+      <Setter Property="Foreground" Value="#9090AA"/>
+      <Setter Property="Padding" Value="12,9"/>
+      <Setter Property="Margin" Value="6,2"/>
       <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="ListBoxItem">
             <Border x:Name="Bd" Background="{TemplateBinding Background}"
-                    CornerRadius="6" Padding="{TemplateBinding Padding}">
+                    CornerRadius="7" Padding="{TemplateBinding Padding}">
               <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}"/>
             </Border>
             <ControlTemplate.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="Bd" Property="Background" Value="#252525"/>
-                <Setter Property="Foreground" Value="#DDDDDD"/>
+                <Setter TargetName="Bd" Property="Background" Value="#1C1C24"/>
+                <Setter Property="Foreground" Value="#C0C0D8"/>
               </Trigger>
               <Trigger Property="IsSelected" Value="True">
-                <Setter TargetName="Bd" Property="Background" Value="#1F3A5F"/>
-                <Setter Property="Foreground" Value="White"/>
+                <Setter TargetName="Bd" Property="Background" Value="#192840"/>
+                <Setter Property="Foreground" Value="#7AAAFF"/>
               </Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>
@@ -39,77 +40,92 @@
   </Window.Resources>
 
   <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="*"/>
-      <RowDefinition Height="Auto"/>
-    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="230"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
 
-    <Grid Grid.Row="0">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="210"/>
-        <ColumnDefinition Width="*"/>
-      </Grid.ColumnDefinitions>
+    <!-- ══ Sidebar ══ -->
+    <Grid Grid.Column="0" Background="#131318">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
 
-      <!-- Sidebar -->
-      <Border Grid.Column="0" Background="#1A1A1A"
-              BorderBrush="#2A2A2A" BorderThickness="0,0,1,0">
-        <DockPanel>
-          <!-- App header -->
-          <Border DockPanel.Dock="Top" Padding="18,16,18,10">
-            <StackPanel Orientation="Horizontal">
-              <Image Source="/Assets/ConsoleDeck.ico" Width="22" Height="22" Margin="0,0,10,0"
-                     VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"/>
-              <TextBlock Text="ConsoleDeck" FontSize="15" FontWeight="SemiBold"
-                         Foreground="White" VerticalAlignment="Center"/>
-            </StackPanel>
+      <!-- Branding -->
+      <Border Grid.Row="0" Padding="18,22,18,16"
+              BorderBrush="#1E1E28" BorderThickness="0,0,0,1">
+        <StackPanel Orientation="Horizontal">
+          <Border Background="#1A2B45" CornerRadius="9" Padding="7"
+                  Margin="0,0,12,0" VerticalAlignment="Center">
+            <Image Source="/Assets/ConsoleDeck.ico" Width="20" Height="20"
+                   RenderOptions.BitmapScalingMode="HighQuality"/>
           </Border>
-
-          <!-- Nav items -->
-          <ListBox x:Name="NavList" Background="Transparent" BorderThickness="0"
-                   Margin="6,4" SelectionChanged="NavList_SelectionChanged"
-                   ItemContainerStyle="{StaticResource NavItemStyle}">
-            <ListBoxItem Tag="dashboard">
-              <StackPanel Orientation="Horizontal">
-                <ui:SymbolIcon Symbol="Grid24" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                <TextBlock Text="Dashboard" VerticalAlignment="Center" FontSize="13"/>
-              </StackPanel>
-            </ListBoxItem>
-            <ListBoxItem Tag="settings">
-              <StackPanel Orientation="Horizontal">
-                <ui:SymbolIcon Symbol="Settings24" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                <TextBlock Text="Einstellungen" VerticalAlignment="Center" FontSize="13"/>
-              </StackPanel>
-            </ListBoxItem>
-          </ListBox>
-        </DockPanel>
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="ConsoleDeck" FontSize="14" FontWeight="Bold" Foreground="White"/>
+            <TextBlock Text="Macro Deck" FontSize="11" Foreground="#606075"/>
+          </StackPanel>
+        </StackPanel>
       </Border>
 
-      <!-- Content frame -->
-      <Frame x:Name="ContentFrame" Grid.Column="1"
-             NavigationUIVisibility="Hidden" Background="#141414"/>
+      <!-- Nav -->
+      <ListBox x:Name="NavList" Grid.Row="1" Background="Transparent" BorderThickness="0"
+               Margin="0,10,0,0" VirtualizingPanel.IsVirtualizing="False"
+               SelectionChanged="NavList_SelectionChanged"
+               ItemContainerStyle="{StaticResource NavItem}">
+        <ListBoxItem Tag="dashboard">
+          <StackPanel Orientation="Horizontal">
+            <ui:SymbolIcon Symbol="Grid24" FontSize="16" Margin="0,0,11,0" VerticalAlignment="Center"/>
+            <TextBlock Text="Dashboard" VerticalAlignment="Center" FontSize="13"/>
+          </StackPanel>
+        </ListBoxItem>
+        <ListBoxItem Tag="settings">
+          <StackPanel Orientation="Horizontal">
+            <ui:SymbolIcon Symbol="Settings24" FontSize="16" Margin="0,0,11,0" VerticalAlignment="Center"/>
+            <TextBlock Text="Einstellungen" VerticalAlignment="Center" FontSize="13"/>
+          </StackPanel>
+        </ListBoxItem>
+      </ListBox>
+
+      <!-- Connection status -->
+      <Border Grid.Row="2" Padding="16,14" BorderBrush="#1E1E28" BorderThickness="0,1,0,0">
+        <StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <Ellipse x:Name="ArduinoLed" Width="7" Height="7" Fill="#505060"
+                     Margin="0,0,8,0" VerticalAlignment="Center"/>
+            <TextBlock x:Name="ArduinoStatus" Text="Arduino: Suche…"
+                       Foreground="#707080" FontSize="11" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <Ellipse x:Name="DiscordLed" Width="7" Height="7" Fill="#505060"
+                     Margin="0,0,8,0" VerticalAlignment="Center"/>
+            <TextBlock x:Name="DiscordStatusBar" Text="Discord: Getrennt"
+                       Foreground="#707080" FontSize="11" VerticalAlignment="Center"/>
+          </StackPanel>
+        </StackPanel>
+      </Border>
     </Grid>
 
-    <!-- Status bar -->
-    <Border Grid.Row="1" Background="#111111" Padding="16,6">
-      <StackPanel Orientation="Horizontal">
-        <Ellipse x:Name="ArduinoLed" Width="8" Height="8" Fill="#555555"
-                 Margin="0,0,6,0" VerticalAlignment="Center"/>
-        <TextBlock x:Name="ArduinoStatus" Text="Arduino: Suche..." Foreground="#888888"
-                   FontSize="11" VerticalAlignment="Center"/>
-        <Rectangle Width="1" Fill="#333333" Margin="16,0" Height="14"/>
-        <Ellipse x:Name="DiscordLed" Width="8" Height="8" Fill="#555555"
-                 Margin="0,0,6,0" VerticalAlignment="Center"/>
-        <TextBlock x:Name="DiscordStatusBar" Text="Discord: Nicht verbunden"
-                   Foreground="#888888" FontSize="11" VerticalAlignment="Center"/>
-      </StackPanel>
-    </Border>
+    <!-- Sidebar border -->
+    <Rectangle Grid.Column="0" HorizontalAlignment="Right" Width="1"
+               Fill="#1E1E28" IsHitTestVisible="False"/>
 
-    <!-- Toast notification -->
-    <Border x:Name="ToastBorder" Grid.Row="0" Grid.RowSpan="2"
+    <!-- Content -->
+    <Frame x:Name="ContentFrame" Grid.Column="1"
+           NavigationUIVisibility="Hidden" Background="Transparent"/>
+
+    <!-- Toast -->
+    <Border x:Name="ToastBorder"
+            Grid.Column="0" Grid.ColumnSpan="2"
             VerticalAlignment="Bottom" HorizontalAlignment="Center"
-            Background="#1F3A5F" CornerRadius="6" Padding="16,8"
-            Margin="0,0,0,20" Visibility="Collapsed" Panel.ZIndex="100">
-      <TextBlock x:Name="ToastText" Foreground="White" FontSize="13"/>
+            Background="#192840" CornerRadius="10" Padding="18,11"
+            Margin="0,0,0,28" Visibility="Collapsed" Panel.ZIndex="100">
+      <StackPanel Orientation="Horizontal">
+        <ui:SymbolIcon Symbol="Checkmark24" FontSize="14" Foreground="#7AAAFF"
+                       Margin="0,0,9,0" VerticalAlignment="Center"/>
+        <TextBlock x:Name="ToastText" Foreground="White" FontSize="13"/>
+      </StackPanel>
     </Border>
   </Grid>
 </Window>

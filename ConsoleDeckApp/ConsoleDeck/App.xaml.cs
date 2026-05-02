@@ -7,7 +7,8 @@ namespace ConsoleDeck;
 
 public partial class App : Application
 {
-    private static readonly Mutex _mutex = new(true, "ConsoleDeck-SingleInstance");
+    private static readonly Mutex _mutex = new(false, "ConsoleDeck-SingleInstance");
+    private bool _mutexOwned;
 
     public static ConfigService Config { get; } = new();
     public static SerialService Serial { get; } = new();
@@ -18,20 +19,38 @@ public partial class App : Application
 
     protected override async void OnStartup(StartupEventArgs e)
     {
-        if (!_mutex.WaitOne(TimeSpan.Zero, true))
+        try
+        {
+            _mutexOwned = _mutex.WaitOne(TimeSpan.Zero, false);
+        }
+        catch (AbandonedMutexException)
+        {
+            _mutexOwned = true;
+        }
+
+        if (!_mutexOwned)
         {
             MessageBox.Show("ConsoleDeck läuft bereits.", "ConsoleDeck", MessageBoxButton.OK, MessageBoxImage.Information);
             Current.Shutdown();
             return;
         }
 
+        bool silent = e.Args.Contains("--silent");
+
         base.OnStartup(e);
         Wpf.Ui.Appearance.ApplicationThemeManager.Apply(Wpf.Ui.Appearance.ApplicationTheme.Dark);
 
         _trayIcon = (TaskbarIcon)FindResource("TrayIcon");
+        _trayIcon.ForceCreate(false);
 
         var mainWindow = new MainWindow();
         MainWindow = mainWindow;
+
+        if (!silent)
+        {
+            mainWindow.Show();
+            mainWindow.Activate();
+        }
 
         Config.StartWatching();
         Serial.Start();
@@ -66,7 +85,8 @@ public partial class App : Application
         Serial.Stop();
         Discord.Disconnect();
         _trayIcon?.Dispose();
-        _mutex.ReleaseMutex();
+        if (_mutexOwned) _mutex.ReleaseMutex();
+        _mutex.Dispose();
         base.OnExit(e);
     }
 

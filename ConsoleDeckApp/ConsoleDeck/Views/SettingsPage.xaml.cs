@@ -1,6 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using ConsoleDeck.Core;
 using ConsoleDeck.Models;
 
 namespace ConsoleDeck.Views;
@@ -17,6 +19,8 @@ public partial class SettingsPage : Page
 
     private void LoadSettings()
     {
+        AutostartToggle.IsChecked = AutostartService.IsEnabled();
+
         var discord = App.Config.LoadDiscordAuth();
         TbDiscordId.Text = discord.ClientId;
         PbDiscordSecret.Password = discord.ClientSecret;
@@ -26,22 +30,29 @@ public partial class SettingsPage : Page
         PbHaToken.Password = ha.Token;
     }
 
-    private void OnDiscordStatusChanged(Core.DiscordStatus status)
+    private void AutostartToggle_Changed(object sender, RoutedEventArgs e)
+    {
+        var enabled = AutostartToggle.IsChecked == true;
+        AutostartService.SetEnabled(enabled);
+        ShowToast(enabled ? "Autostart aktiviert." : "Autostart deaktiviert.");
+    }
+
+    private void OnDiscordStatusChanged(DiscordStatus status)
         => Dispatcher.Invoke(() => UpdateDiscordBadge(status));
 
-    private void UpdateDiscordBadge(Core.DiscordStatus status)
+    private void UpdateDiscordBadge(DiscordStatus status)
     {
         (DiscordStatusText.Text, DiscordStatusBadge.Background) = status switch
         {
-            Core.DiscordStatus.Connected    => ("Verbunden",    new SolidColorBrush(Color.FromRgb(30, 70, 40))),
-            Core.DiscordStatus.Connecting   => ("Verbindet...", new SolidColorBrush(Color.FromRgb(60, 50, 20))),
-            _                               => ("Nicht verbunden", new SolidColorBrush(Color.FromRgb(50, 30, 30))),
+            DiscordStatus.Connected  => ("Verbunden",     new SolidColorBrush(Color.FromRgb(20, 55, 30))),
+            DiscordStatus.Connecting => ("Verbindet…",    new SolidColorBrush(Color.FromRgb(50, 40, 15))),
+            _                        => ("Nicht verbunden", new SolidColorBrush(Color.FromRgb(40, 20, 20))),
         };
         DiscordStatusText.Foreground = status switch
         {
-            Core.DiscordStatus.Connected  => new SolidColorBrush(Color.FromRgb(100, 220, 120)),
-            Core.DiscordStatus.Connecting => new SolidColorBrush(Colors.Gold),
-            _ => new SolidColorBrush(Color.FromRgb(200, 100, 100)),
+            DiscordStatus.Connected  => new SolidColorBrush(Color.FromRgb(80, 200, 100)),
+            DiscordStatus.Connecting => new SolidColorBrush(Colors.Gold),
+            _                        => new SolidColorBrush(Color.FromRgb(180, 70, 70)),
         };
     }
 
@@ -66,7 +77,7 @@ public partial class SettingsPage : Page
     {
         App.Config.SaveHaAuth(new HaAuth
         {
-            Url = TbHaUrl.Text.Trim().TrimEnd('/'),
+            Url   = TbHaUrl.Text.Trim().TrimEnd('/'),
             Token = PbHaToken.Password,
         });
         HaTestResult.Text = "";
@@ -75,15 +86,15 @@ public partial class SettingsPage : Page
 
     private async void TestHa_Click(object sender, RoutedEventArgs e)
     {
-        HaTestResult.Text = "Teste...";
+        HaTestResult.Text       = "Teste…";
         HaTestResult.Foreground = new SolidColorBrush(Colors.Gray);
         var ok = await App.HomeAssistant.TestConnectionAsync(
             TbHaUrl.Text.Trim().TrimEnd('/'),
             PbHaToken.Password);
-        HaTestResult.Text = ok ? "✓ Verbunden" : "✗ Fehler";
+        HaTestResult.Text       = ok ? "✓ Verbunden" : "✗ Fehler";
         HaTestResult.Foreground = ok
-            ? new SolidColorBrush(Color.FromRgb(100, 220, 120))
-            : new SolidColorBrush(Color.FromRgb(220, 80, 80));
+            ? new SolidColorBrush(Color.FromRgb(80, 200, 100))
+            : new SolidColorBrush(Color.FromRgb(200, 70, 70));
     }
 
     private void ShowToast(string msg)

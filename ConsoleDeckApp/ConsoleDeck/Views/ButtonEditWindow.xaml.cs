@@ -67,33 +67,25 @@ public partial class ButtonEditWindow : Window
 
     private void TypeChanged(object sender, RoutedEventArgs e)
     {
+        if (PanelLink == null) return; // guard: panels not yet initialized during XAML load
         if (sender is not RadioButton rb) return;
-        var type = rb.Tag?.ToString() ?? "none";
-        ShowPanel(type);
+        ShowPanel(rb.Tag?.ToString() ?? "none");
     }
 
     private void ShowPanel(string type)
     {
-        PanelLink.Visibility = Visibility.Collapsed;
-        PanelExe.Visibility = Visibility.Collapsed;
-        PanelHotkey.Visibility = Visibility.Collapsed;
-        PanelHa.Visibility = Visibility.Collapsed;
+        PanelLink.Visibility    = Visibility.Collapsed;
+        PanelExe.Visibility     = Visibility.Collapsed;
+        PanelHotkey.Visibility  = Visibility.Collapsed;
+        PanelHa.Visibility      = Visibility.Collapsed;
         PanelNoInput.Visibility = Visibility.Collapsed;
 
         switch (type)
         {
-            case "link":
-                PanelLink.Visibility = Visibility.Visible;
-                break;
-            case "exe":
-                PanelExe.Visibility = Visibility.Visible;
-                break;
-            case "hotkey":
-                PanelHotkey.Visibility = Visibility.Visible;
-                break;
-            case "homeassistant":
-                PanelHa.Visibility = Visibility.Visible;
-                break;
+            case "link":         PanelLink.Visibility    = Visibility.Visible; break;
+            case "exe":          PanelExe.Visibility     = Visibility.Visible; break;
+            case "hotkey":       PanelHotkey.Visibility  = Visibility.Visible; break;
+            case "homeassistant": PanelHa.Visibility     = Visibility.Visible; break;
             default:
                 PanelNoInput.Visibility = Visibility.Visible;
                 TbNoInputHint.Text = GetNoInputHint(type);
@@ -108,7 +100,7 @@ public partial class ButtonEditWindow : Window
         "prev_track"     => "Sendet den 'Vorheriger Titel'-Medienkey.",
         "stop"           => "Sendet den Stop-Medienkey.",
         "mute"           => "Schaltet die System-Stummschaltung ein/aus.",
-        "discord_mute"   => "Schaltet das Mikrofon in Discord stum oder ein.",
+        "discord_mute"   => "Schaltet das Mikrofon in Discord stumm oder ein.",
         "discord_deafen" => "Aktiviert / deaktiviert das Deafen in Discord.",
         "discord_leave"  => "Verlässt den aktuellen Discord-Sprachkanal.",
         "none"           => "Dieser Button hat keine Aktion.",

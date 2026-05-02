@@ -26,4 +26,4 @@ Name: "{group}\Uninstall ConsoleDeck"; Filename: "{uninstallexe}"
 Name: "startup"; Description: "ConsoleDeck automatisch mit Windows starten"; GroupDescription: "Zusätzliche Optionen:"
 
 [Registry]
-Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "ConsoleDeck"; ValueData: """{app}\ConsoleDeck.exe"""; Flags: uninsdeletevalue; Tasks: startup
+Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "ConsoleDeck"; ValueData: """{app}\ConsoleDeck.exe"" --silent"; Flags: uninsdeletevalue; Tasks: startup
