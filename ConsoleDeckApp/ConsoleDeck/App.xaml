@@ -7,8 +7,10 @@
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ui:ThemesDictionary Theme="Dark"/>
+        <ui:ThemesDictionary Theme="Light"/>
         <ui:ControlsDictionary/>
+        <!-- Initial theme — swapped at runtime by ThemeService -->
+        <ResourceDictionary Source="Themes/Light.xaml"/>
       </ResourceDictionary.MergedDictionaries>
 
       <tb:TaskbarIcon x:Key="TrayIcon"

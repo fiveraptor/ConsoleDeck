@@ -5,13 +5,14 @@
         Title="ConsoleDeck" Width="980" Height="720"
         MinWidth="740" MinHeight="520"
         WindowStartupLocation="CenterScreen"
-        Background="#0E0E11"
+        Background="{DynamicResource BrPageBg}"
         Closing="Window_Closing">
 
   <Window.Resources>
+    <!-- NavItem: triggers use Style.Triggers so DynamicResource works correctly -->
     <Style x:Key="NavItem" TargetType="ListBoxItem">
       <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="Foreground" Value="#9090AA"/>
+      <Setter Property="Foreground" Value="{DynamicResource BrTextPrimary}"/>
       <Setter Property="Padding" Value="12,9"/>
       <Setter Property="Margin" Value="6,2"/>
       <Setter Property="Cursor" Value="Hand"/>
@@ -19,23 +20,22 @@
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="ListBoxItem">
-            <Border x:Name="Bd" Background="{TemplateBinding Background}"
-                    CornerRadius="7" Padding="{TemplateBinding Padding}">
+            <Border Background="{TemplateBinding Background}"
+                    CornerRadius="5" Padding="{TemplateBinding Padding}">
               <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}"/>
             </Border>
-            <ControlTemplate.Triggers>
-              <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="Bd" Property="Background" Value="#1C1C24"/>
-                <Setter Property="Foreground" Value="#C0C0D8"/>
-              </Trigger>
-              <Trigger Property="IsSelected" Value="True">
-                <Setter TargetName="Bd" Property="Background" Value="#192840"/>
-                <Setter Property="Foreground" Value="#7AAAFF"/>
-              </Trigger>
-            </ControlTemplate.Triggers>
           </ControlTemplate>
         </Setter.Value>
       </Setter>
+      <Style.Triggers>
+        <Trigger Property="IsMouseOver" Value="True">
+          <Setter Property="Background" Value="{DynamicResource BrNavHoverBg}"/>
+        </Trigger>
+        <Trigger Property="IsSelected" Value="True">
+          <Setter Property="Background" Value="{DynamicResource BrNavSelectedBg}"/>
+          <Setter Property="Foreground" Value="{DynamicResource BrNavSelectedFg}"/>
+        </Trigger>
+      </Style.Triggers>
     </Style>
   </Window.Resources>
 
@@ -45,8 +45,8 @@
       <ColumnDefinition Width="*"/>
     </Grid.ColumnDefinitions>
 
-    <!-- ══ Sidebar ══ -->
-    <Grid Grid.Column="0" Background="#131318">
+    <!-- Sidebar -->
+    <Grid Grid.Column="0" Background="{DynamicResource BrSidebarBg}">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="*"/>
@@ -55,23 +55,23 @@
 
       <!-- Branding -->
       <Border Grid.Row="0" Padding="18,22,18,16"
-              BorderBrush="#1E1E28" BorderThickness="0,0,0,1">
+              BorderBrush="{DynamicResource BrDivider}" BorderThickness="0,0,0,1">
         <StackPanel Orientation="Horizontal">
-          <Border Background="#1A2B45" CornerRadius="9" Padding="7"
-                  Margin="0,0,12,0" VerticalAlignment="Center">
-            <Image Source="/Assets/ConsoleDeck.ico" Width="20" Height="20"
-                   RenderOptions.BitmapScalingMode="HighQuality"/>
-          </Border>
+          <Image Source="/Assets/ConsoleDeck.ico" Width="22" Height="22"
+                 RenderOptions.BitmapScalingMode="HighQuality"
+                 Margin="0,0,12,0" VerticalAlignment="Center"/>
           <StackPanel VerticalAlignment="Center">
-            <TextBlock Text="ConsoleDeck" FontSize="14" FontWeight="Bold" Foreground="White"/>
-            <TextBlock Text="Macro Deck" FontSize="11" Foreground="#606075"/>
+            <TextBlock Text="ConsoleDeck" FontSize="14" FontWeight="SemiBold"
+                       Foreground="{DynamicResource BrTextPrimary}"/>
+            <TextBlock Text="Macro Deck" FontSize="11"
+                       Foreground="{DynamicResource BrTextSecondary}"/>
           </StackPanel>
         </StackPanel>
       </Border>
 
       <!-- Nav -->
       <ListBox x:Name="NavList" Grid.Row="1" Background="Transparent" BorderThickness="0"
-               Margin="0,10,0,0" VirtualizingPanel.IsVirtualizing="False"
+               Margin="0,8,0,0" VirtualizingPanel.IsVirtualizing="False"
                SelectionChanged="NavList_SelectionChanged"
                ItemContainerStyle="{StaticResource NavItem}">
         <ListBoxItem Tag="dashboard">
@@ -89,42 +89,50 @@
       </ListBox>
 
       <!-- Connection status -->
-      <Border Grid.Row="2" Padding="16,14" BorderBrush="#1E1E28" BorderThickness="0,1,0,0">
+      <Border Grid.Row="2" Padding="16,14"
+              BorderBrush="{DynamicResource BrDivider}" BorderThickness="0,1,0,0">
         <StackPanel>
-          <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-            <Ellipse x:Name="ArduinoLed" Width="7" Height="7" Fill="#505060"
+          <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+            <Ellipse x:Name="ArduinoLed" Width="7" Height="7"
+                     Fill="{DynamicResource BrTextHint}"
                      Margin="0,0,8,0" VerticalAlignment="Center"/>
             <TextBlock x:Name="ArduinoStatus" Text="Arduino: Suche…"
-                       Foreground="#707080" FontSize="11" VerticalAlignment="Center"/>
+                       Foreground="{DynamicResource BrTextSecondary}"
+                       FontSize="11" VerticalAlignment="Center"/>
           </StackPanel>
           <StackPanel Orientation="Horizontal">
-            <Ellipse x:Name="DiscordLed" Width="7" Height="7" Fill="#505060"
+            <Ellipse x:Name="DiscordLed" Width="7" Height="7"
+                     Fill="{DynamicResource BrTextHint}"
                      Margin="0,0,8,0" VerticalAlignment="Center"/>
             <TextBlock x:Name="DiscordStatusBar" Text="Discord: Getrennt"
-                       Foreground="#707080" FontSize="11" VerticalAlignment="Center"/>
+                       Foreground="{DynamicResource BrTextSecondary}"
+                       FontSize="11" VerticalAlignment="Center"/>
           </StackPanel>
         </StackPanel>
       </Border>
     </Grid>
 
-    <!-- Sidebar border -->
+    <!-- Sidebar divider -->
     <Rectangle Grid.Column="0" HorizontalAlignment="Right" Width="1"
-               Fill="#1E1E28" IsHitTestVisible="False"/>
+               Fill="{DynamicResource BrDivider}" IsHitTestVisible="False"/>
 
     <!-- Content -->
     <Frame x:Name="ContentFrame" Grid.Column="1"
-           NavigationUIVisibility="Hidden" Background="Transparent"/>
+           NavigationUIVisibility="Hidden" Background="Transparent">
+      <Frame.RenderTransform><TranslateTransform/></Frame.RenderTransform>
+    </Frame>
 
-    <!-- Toast -->
+    <!-- Toast notification -->
     <Border x:Name="ToastBorder"
             Grid.Column="0" Grid.ColumnSpan="2"
             VerticalAlignment="Bottom" HorizontalAlignment="Center"
-            Background="#192840" CornerRadius="10" Padding="18,11"
-            Margin="0,0,0,28" Visibility="Collapsed" Panel.ZIndex="100">
+            Background="{DynamicResource BrToastBg}" CornerRadius="6" Padding="18,11"
+            Margin="0,0,0,28" Visibility="Collapsed" Opacity="0" Panel.ZIndex="100">
       <StackPanel Orientation="Horizontal">
-        <ui:SymbolIcon Symbol="Checkmark24" FontSize="14" Foreground="#7AAAFF"
+        <ui:SymbolIcon Symbol="Checkmark24" FontSize="14"
+                       Foreground="{DynamicResource BrToastFg}"
                        Margin="0,0,9,0" VerticalAlignment="Center"/>
-        <TextBlock x:Name="ToastText" Foreground="White" FontSize="13"/>
+        <TextBlock x:Name="ToastText" Foreground="{DynamicResource BrToastFg}" FontSize="13"/>
       </StackPanel>
     </Border>
   </Grid>

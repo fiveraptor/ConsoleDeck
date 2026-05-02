@@ -2,43 +2,123 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:h="clr-namespace:ConsoleDeck.Helpers"
         Title="Button konfigurieren"
         Width="660" Height="560"
         MinWidth="580" MinHeight="480"
         WindowStartupLocation="CenterOwner"
-        Background="#0E0E11"
+        Background="{DynamicResource BrPageBg}"
         ResizeMode="CanResize">
 
   <Window.Resources>
     <Style x:Key="CatHeader" TargetType="TextBlock">
-      <Setter Property="Foreground" Value="#606078"/>
-      <Setter Property="FontSize" Value="10"/>
-      <Setter Property="FontWeight" Value="Bold"/>
-      <Setter Property="Margin" Value="12,10,0,3"/>
+      <Setter Property="Foreground" Value="{DynamicResource BrTextHint}"/>
+      <Setter Property="FontSize"   Value="10"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Margin"     Value="12,10,0,3"/>
     </Style>
 
+    <!-- TypeRadio: Style.Triggers so DynamicResource works -->
     <Style x:Key="TypeRadio" TargetType="RadioButton">
-      <Setter Property="Margin" Value="3,1"/>
-      <Setter Property="Padding" Value="10,6"/>
-      <Setter Property="Foreground" Value="#A0A0B8"/>
-      <Setter Property="FontSize" Value="13"/>
-      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Background"   Value="Transparent"/>
+      <Setter Property="Margin"       Value="3,1"/>
+      <Setter Property="Padding"      Value="10,6"/>
+      <Setter Property="Foreground"   Value="{DynamicResource BrTextPrimary}"/>
+      <Setter Property="FontSize"     Value="13"/>
+      <Setter Property="Cursor"       Value="Hand"/>
       <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="RadioButton">
-            <Border x:Name="Bd" Background="Transparent" CornerRadius="6"
+            <Border Background="{TemplateBinding Background}" CornerRadius="5"
                     Padding="{TemplateBinding Padding}">
               <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}"/>
             </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <Trigger Property="IsMouseOver" Value="True">
+          <Setter Property="Background" Value="{DynamicResource BrNavHoverBg}"/>
+        </Trigger>
+        <Trigger Property="IsChecked" Value="True">
+          <Setter Property="Background" Value="{DynamicResource BrNavSelectedBg}"/>
+          <Setter Property="Foreground" Value="{DynamicResource BrNavSelectedFg}"/>
+        </Trigger>
+      </Style.Triggers>
+    </Style>
+
+    <Style x:Key="FieldLabel" TargetType="TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource BrTextPrimary}"/>
+      <Setter Property="FontSize"   Value="12"/>
+      <Setter Property="FontWeight" Value="Medium"/>
+      <Setter Property="Margin"     Value="0,0,0,5"/>
+    </Style>
+    <Style x:Key="Hint" TargetType="TextBlock">
+      <Setter Property="Foreground"   Value="{DynamicResource BrTextSecondary}"/>
+      <Setter Property="FontSize"     Value="12"/>
+      <Setter Property="TextWrapping" Value="Wrap"/>
+      <Setter Property="Margin"       Value="0,0,0,10"/>
+    </Style>
+    <Style x:Key="Input" TargetType="ui:TextBox">
+      <Setter Property="Background"      Value="{DynamicResource BrInputBg}"/>
+      <Setter Property="Foreground"      Value="{DynamicResource BrTextPrimary}"/>
+      <Setter Property="BorderBrush"     Value="{DynamicResource BrInputBorder}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding"         Value="10,7"/>
+      <Setter Property="FontSize"        Value="13"/>
+      <Setter Property="CaretBrush"      Value="{DynamicResource BrTextPrimary}"/>
+      <Setter Property="Margin"          Value="0,0,0,14"/>
+    </Style>
+
+    <Style x:Key="AccentBtn" TargetType="Button">
+      <Setter Property="Cursor"     Value="Hand"/>
+      <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+      <Setter Property="Padding"    Value="20,8"/>
+      <Setter Property="FontSize"   Value="13"/>
+      <Setter Property="FontWeight" Value="Medium"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Bd" Background="#0078D4" CornerRadius="4"
+                    Padding="{TemplateBinding Padding}"
+                    RenderTransformOrigin="0.5,0.5">
+              <Border.RenderTransform><ScaleTransform/></Border.RenderTransform>
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                TextElement.Foreground="White"
+                                TextElement.FontSize="{TemplateBinding FontSize}"
+                                TextElement.FontWeight="{TemplateBinding FontWeight}"/>
+            </Border>
             <ControlTemplate.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="Bd" Property="Background" Value="#1C1C24"/>
-                <Setter Property="Foreground" Value="#C0C0D0"/>
+                <Setter TargetName="Bd" Property="Background" Value="#006CBD"/>
               </Trigger>
-              <Trigger Property="IsChecked" Value="True">
-                <Setter TargetName="Bd" Property="Background" Value="#192840"/>
-                <Setter Property="Foreground" Value="#7AAAFF"/>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="#005BA1"/>
+                <Trigger.EnterActions>
+                  <BeginStoryboard>
+                    <Storyboard>
+                      <DoubleAnimation Storyboard.TargetName="Bd"
+                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                       To="0.97" Duration="0:0:0.05"/>
+                      <DoubleAnimation Storyboard.TargetName="Bd"
+                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                       To="0.97" Duration="0:0:0.05"/>
+                    </Storyboard>
+                  </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                  <BeginStoryboard>
+                    <Storyboard>
+                      <DoubleAnimation Storyboard.TargetName="Bd"
+                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                       To="1" Duration="0:0:0.1"/>
+                      <DoubleAnimation Storyboard.TargetName="Bd"
+                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                       To="1" Duration="0:0:0.1"/>
+                    </Storyboard>
+                  </BeginStoryboard>
+                </Trigger.ExitActions>
               </Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>
@@ -46,48 +126,60 @@
       </Setter>
     </Style>
 
-    <Style x:Key="FieldLabel" TargetType="TextBlock">
-      <Setter Property="Foreground" Value="#9090A8"/>
-      <Setter Property="FontSize" Value="12"/>
-      <Setter Property="Margin" Value="0,0,0,5"/>
-    </Style>
-
-    <Style x:Key="Hint" TargetType="TextBlock">
-      <Setter Property="Foreground" Value="#707088"/>
-      <Setter Property="FontSize" Value="11"/>
-      <Setter Property="TextWrapping" Value="Wrap"/>
-      <Setter Property="Margin" Value="0,0,0,10"/>
-    </Style>
-
-    <Style x:Key="Input" TargetType="ui:TextBox">
-      <Setter Property="Background" Value="#18181E"/>
-      <Setter Property="Foreground" Value="#E0E0F0"/>
-      <Setter Property="BorderBrush" Value="#2A2A38"/>
-      <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="Padding" Value="10,7"/>
-      <Setter Property="FontSize" Value="13"/>
-      <Setter Property="CaretBrush" Value="White"/>
-      <Setter Property="Margin" Value="0,0,0,14"/>
-    </Style>
-
-    <Style x:Key="AccentBtn" TargetType="Button">
-      <Setter Property="Background" Value="#1E3460"/>
-      <Setter Property="Foreground" Value="#7AAAFF"/>
-      <Setter Property="BorderThickness" Value="0"/>
-      <Setter Property="Padding" Value="20,8"/>
-      <Setter Property="FontSize" Value="13"/>
-      <Setter Property="Cursor" Value="Hand"/>
-      <Setter Property="FontWeight" Value="Medium"/>
-    </Style>
-
     <Style x:Key="GhostBtn" TargetType="Button">
-      <Setter Property="Background" Value="#18181E"/>
-      <Setter Property="Foreground" Value="#9090A8"/>
-      <Setter Property="BorderBrush" Value="#2A2A38"/>
-      <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="Padding" Value="20,8"/>
-      <Setter Property="FontSize" Value="13"/>
-      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Cursor"     Value="Hand"/>
+      <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+      <Setter Property="Padding"    Value="20,8"/>
+      <Setter Property="FontSize"   Value="13"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Bd" Background="{DynamicResource BrGhostBg}"
+                    BorderBrush="{DynamicResource BrGhostBorder}" BorderThickness="1"
+                    CornerRadius="4" Padding="{TemplateBinding Padding}"
+                    RenderTransformOrigin="0.5,0.5">
+              <Border.RenderTransform><ScaleTransform/></Border.RenderTransform>
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                TextElement.Foreground="{DynamicResource BrTextPrimary}"
+                                TextElement.FontSize="{TemplateBinding FontSize}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bd" Property="Background"  Value="#1A808080"/>
+                <Setter TargetName="Bd" Property="BorderBrush" Value="#8C8C8C"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Bd" Property="Background"  Value="#2A808080"/>
+                <Setter TargetName="Bd" Property="BorderBrush" Value="#8C8C8C"/>
+                <Trigger.EnterActions>
+                  <BeginStoryboard>
+                    <Storyboard>
+                      <DoubleAnimation Storyboard.TargetName="Bd"
+                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                       To="0.97" Duration="0:0:0.05"/>
+                      <DoubleAnimation Storyboard.TargetName="Bd"
+                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                       To="0.97" Duration="0:0:0.05"/>
+                    </Storyboard>
+                  </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                  <BeginStoryboard>
+                    <Storyboard>
+                      <DoubleAnimation Storyboard.TargetName="Bd"
+                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                       To="1" Duration="0:0:0.1"/>
+                      <DoubleAnimation Storyboard.TargetName="Bd"
+                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                       To="1" Duration="0:0:0.1"/>
+                    </Storyboard>
+                  </BeginStoryboard>
+                </Trigger.ExitActions>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
     </Style>
   </Window.Resources>
 
@@ -99,9 +191,10 @@
     </Grid.RowDefinitions>
 
     <!-- Title bar -->
-    <Border Grid.Row="0" Background="#131318" Padding="22,16"
-            BorderBrush="#1E1E28" BorderThickness="0,0,0,1">
-      <TextBlock x:Name="TitleText" FontSize="16" FontWeight="Bold" Foreground="White"/>
+    <Border Grid.Row="0" Background="{DynamicResource BrSidebarBg}" Padding="22,16"
+            BorderBrush="{DynamicResource BrDivider}" BorderThickness="0,0,0,1">
+      <TextBlock x:Name="TitleText" FontSize="16" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrTextPrimary}"/>
     </Border>
 
     <!-- Body -->
@@ -112,40 +205,42 @@
       </Grid.ColumnDefinitions>
 
       <!-- Type list -->
-      <Border Grid.Column="0" Background="#0F0F14"
-              BorderBrush="#1E1E28" BorderThickness="0,0,1,0">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <Border Grid.Column="0" Background="{DynamicResource BrSidebarBg}"
+              BorderBrush="{DynamicResource BrDivider}" BorderThickness="0,0,1,0">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" h:SmoothScroll.Enabled="True">
           <StackPanel Margin="6,10">
             <TextBlock Style="{StaticResource CatHeader}" Text="LAUNCH"/>
-            <RadioButton x:Name="RbLink"   Style="{StaticResource TypeRadio}" Content="Link (URL)"     Tag="link"           Checked="TypeChanged"/>
-            <RadioButton x:Name="RbExe"    Style="{StaticResource TypeRadio}" Content="Datei / App"    Tag="exe"            Checked="TypeChanged"/>
+            <RadioButton x:Name="RbLink"   Style="{StaticResource TypeRadio}" Content="Link (URL)"       Tag="link"           Checked="TypeChanged"/>
+            <RadioButton x:Name="RbExe"    Style="{StaticResource TypeRadio}" Content="Datei / App"      Tag="exe"            Checked="TypeChanged"/>
 
             <TextBlock Style="{StaticResource CatHeader}" Text="MEDIA"/>
-            <RadioButton x:Name="RbPlay"   Style="{StaticResource TypeRadio}" Content="Play / Pause"    Tag="play_pause"    Checked="TypeChanged"/>
-            <RadioButton x:Name="RbNext"   Style="{StaticResource TypeRadio}" Content="Nächster Titel"  Tag="next_track"    Checked="TypeChanged"/>
-            <RadioButton x:Name="RbPrev"   Style="{StaticResource TypeRadio}" Content="Vorheriger Titel" Tag="prev_track"   Checked="TypeChanged"/>
-            <RadioButton x:Name="RbStop"   Style="{StaticResource TypeRadio}" Content="Stop"             Tag="stop"         Checked="TypeChanged"/>
+            <RadioButton x:Name="RbPlay"   Style="{StaticResource TypeRadio}" Content="Play / Pause"     Tag="play_pause"     Checked="TypeChanged"/>
+            <RadioButton x:Name="RbNext"   Style="{StaticResource TypeRadio}" Content="Nächster Titel"   Tag="next_track"     Checked="TypeChanged"/>
+            <RadioButton x:Name="RbPrev"   Style="{StaticResource TypeRadio}" Content="Vorheriger Titel" Tag="prev_track"     Checked="TypeChanged"/>
+            <RadioButton x:Name="RbStop"   Style="{StaticResource TypeRadio}" Content="Stop"             Tag="stop"           Checked="TypeChanged"/>
 
             <TextBlock Style="{StaticResource CatHeader}" Text="SYSTEM"/>
-            <RadioButton x:Name="RbMute"   Style="{StaticResource TypeRadio}" Content="System Mute"     Tag="mute"          Checked="TypeChanged"/>
-            <RadioButton x:Name="RbHotkey" Style="{StaticResource TypeRadio}" Content="Tastenkürzel"    Tag="hotkey"        Checked="TypeChanged"/>
+            <RadioButton x:Name="RbMute"   Style="{StaticResource TypeRadio}" Content="System Mute"      Tag="mute"           Checked="TypeChanged"/>
+            <RadioButton x:Name="RbHotkey" Style="{StaticResource TypeRadio}" Content="Tastenkürzel"     Tag="hotkey"         Checked="TypeChanged"/>
 
             <TextBlock Style="{StaticResource CatHeader}" Text="DISCORD"/>
-            <RadioButton x:Name="RbDMute"  Style="{StaticResource TypeRadio}" Content="Mute / Unmute"         Tag="discord_mute"   Checked="TypeChanged"/>
-            <RadioButton x:Name="RbDDeaf"  Style="{StaticResource TypeRadio}" Content="Deafen / Undeafen"     Tag="discord_deafen" Checked="TypeChanged"/>
-            <RadioButton x:Name="RbDLeave" Style="{StaticResource TypeRadio}" Content="Channel verlassen"     Tag="discord_leave"  Checked="TypeChanged"/>
+            <RadioButton x:Name="RbDMute"  Style="{StaticResource TypeRadio}" Content="Mute / Unmute"      Tag="discord_mute"   Checked="TypeChanged"/>
+            <RadioButton x:Name="RbDDeaf"  Style="{StaticResource TypeRadio}" Content="Deafen / Undeafen"  Tag="discord_deafen" Checked="TypeChanged"/>
+            <RadioButton x:Name="RbDLeave" Style="{StaticResource TypeRadio}" Content="Channel verlassen"  Tag="discord_leave"  Checked="TypeChanged"/>
 
             <TextBlock Style="{StaticResource CatHeader}" Text="HOME ASSISTANT"/>
-            <RadioButton x:Name="RbHa"     Style="{StaticResource TypeRadio}" Content="Home Assistant"  Tag="homeassistant" Checked="TypeChanged"/>
+            <RadioButton x:Name="RbHa"     Style="{StaticResource TypeRadio}" Content="Home Assistant"   Tag="homeassistant"  Checked="TypeChanged"/>
 
             <TextBlock Style="{StaticResource CatHeader}" Text="SONSTIGES"/>
-            <RadioButton x:Name="RbNone"   Style="{StaticResource TypeRadio}" Content="Keine Aktion"    Tag="none"          Checked="TypeChanged"/>
+            <RadioButton x:Name="RbNone"   Style="{StaticResource TypeRadio}" Content="Keine Aktion"     Tag="none"           Checked="TypeChanged"/>
           </StackPanel>
         </ScrollViewer>
       </Border>
 
       <!-- Form fields -->
-      <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Background="#0E0E11">
+      <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto"
+                    Background="{DynamicResource BrFormBg}"
+                    h:SmoothScroll.Enabled="True">
         <StackPanel Margin="26,22">
 
           <StackPanel x:Name="PanelLink" Visibility="Collapsed">
@@ -165,28 +260,34 @@
               <Button Grid.Column="1" Content="…" Margin="8,0,0,0" Padding="12,7"
                       Style="{StaticResource GhostBtn}" Click="BrowseExe_Click"/>
             </Grid>
-            <TextBlock Style="{StaticResource FieldLabel}" Text="Fensterfokus-Hinweis (optional)"
-                       Margin="0,2,0,5"/>
+            <TextBlock Style="{StaticResource FieldLabel}"
+                       Text="Fensterfokus-Hinweis (optional)" Margin="0,2,0,5"/>
             <TextBlock Style="{StaticResource Hint}"
                        Text="Ein Wort aus dem Fenstertitel. Wenn das Fenster offen ist, wird es fokussiert statt neu geöffnet."/>
-            <ui:TextBox x:Name="TbFocus" Style="{StaticResource Input}" PlaceholderText="z.B. Chrome, Notepad …"/>
+            <ui:TextBox x:Name="TbFocus" Style="{StaticResource Input}"
+                        PlaceholderText="z.B. Chrome, Notepad …"/>
           </StackPanel>
 
           <StackPanel x:Name="PanelHotkey" Visibility="Collapsed">
             <TextBlock Style="{StaticResource FieldLabel}" Text="Tastenkombination"/>
-            <TextBlock Style="{StaticResource Hint}" Text="Format: ctrl+shift+m  ·  ctrl+alt+d&#x0a;Modifier: ctrl, shift, alt, win — Tasten: F1–F12, Buchstaben, Zahlen"/>
-            <ui:TextBox x:Name="TbHotkey" Style="{StaticResource Input}" PlaceholderText="ctrl+shift+m"/>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Format: ctrl+shift+m  ·  ctrl+alt+d&#x0a;Modifier: ctrl, shift, alt, win — Tasten: F1–F12, Buchstaben, Zahlen"/>
+            <ui:TextBox x:Name="TbHotkey" Style="{StaticResource Input}"
+                        PlaceholderText="ctrl+shift+m"/>
           </StackPanel>
 
           <StackPanel x:Name="PanelHa" Visibility="Collapsed">
             <TextBlock Style="{StaticResource FieldLabel}" Text="Entity ID"/>
             <TextBlock Style="{StaticResource Hint}"
                        Text="Home Assistant → Einstellungen → Geräte &amp; Dienste → Entity-ID"/>
-            <ui:TextBox x:Name="TbEntityId" Style="{StaticResource Input}" PlaceholderText="light.wohnzimmer"/>
+            <ui:TextBox x:Name="TbEntityId" Style="{StaticResource Input}"
+                        PlaceholderText="light.wohnzimmer"/>
             <TextBlock Style="{StaticResource FieldLabel}" Text="Aktion" Margin="0,2,0,5"/>
             <ComboBox x:Name="CbHaAction"
-                      Background="#18181E" Foreground="#E0E0F0"
-                      BorderBrush="#2A2A38" FontSize="13" Padding="10,7">
+                      Background="{DynamicResource BrInputBg}"
+                      Foreground="{DynamicResource BrTextPrimary}"
+                      BorderBrush="{DynamicResource BrInputBorder}"
+                      FontSize="13" Padding="10,7">
               <ComboBoxItem Content="toggle" IsSelected="True"/>
               <ComboBoxItem Content="turn_on"/>
               <ComboBoxItem Content="turn_off"/>
@@ -194,8 +295,9 @@
           </StackPanel>
 
           <StackPanel x:Name="PanelNoInput" Visibility="Collapsed">
-            <TextBlock x:Name="TbNoInputHint" Foreground="#9090A8" FontSize="13"
-                       TextWrapping="Wrap" LineHeight="22"/>
+            <TextBlock x:Name="TbNoInputHint"
+                       Foreground="{DynamicResource BrTextSecondary}"
+                       FontSize="13" TextWrapping="Wrap" LineHeight="22"/>
           </StackPanel>
 
         </StackPanel>
@@ -203,8 +305,8 @@
     </Grid>
 
     <!-- Footer -->
-    <Border Grid.Row="2" Background="#131318" Padding="22,14"
-            BorderBrush="#1E1E28" BorderThickness="0,1,0,0">
+    <Border Grid.Row="2" Background="{DynamicResource BrSidebarBg}" Padding="22,14"
+            BorderBrush="{DynamicResource BrDivider}" BorderThickness="0,1,0,0">
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
         <Button Content="Abbrechen" Style="{StaticResource GhostBtn}" Margin="0,0,10,0"
                 Click="Cancel_Click"/>

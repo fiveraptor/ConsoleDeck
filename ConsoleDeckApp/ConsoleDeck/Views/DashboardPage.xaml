@@ -8,39 +8,62 @@
 
   <Page.Resources>
     <Style x:Key="CardBtn" TargetType="Button">
-      <Setter Property="Background" Value="#18181E"/>
-      <Setter Property="BorderBrush" Value="#24242E"/>
-      <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="Button">
-            <Border x:Name="Bd"
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="12">
-              <Grid>
-                <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                <!-- Edit hint shown on hover -->
-                <Border x:Name="EditHint" CornerRadius="0,0,12,12"
-                        Background="#0E0E1A" VerticalAlignment="Bottom"
-                        Padding="0,8" Opacity="0">
-                  <TextBlock Text="✎  bearbeiten" FontSize="11" Foreground="#4A80F0"
-                             HorizontalAlignment="Center" FontWeight="Medium"/>
-                </Border>
-              </Grid>
-            </Border>
+            <Grid>
+              <!-- Base card (theme-aware via DynamicResource) -->
+              <Border x:Name="Base" Background="{DynamicResource BrCardBg}"
+                      BorderBrush="{DynamicResource BrCardBorder}"
+                      BorderThickness="1" CornerRadius="8">
+                <Grid>
+                  <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                  <!-- Edit hint strip — fades in on hover -->
+                  <Border x:Name="EditHint" CornerRadius="0,0,8,8"
+                          Background="#F0F6FF" VerticalAlignment="Bottom"
+                          Padding="0,7" Opacity="0" IsHitTestVisible="False">
+                    <TextBlock Text="✎  bearbeiten" FontSize="11" Foreground="#0078D4"
+                               HorizontalAlignment="Center" FontWeight="Medium"/>
+                  </Border>
+                </Grid>
+              </Border>
+              <!-- Hover ring: accent border fades in; sits above Base -->
+              <Border x:Name="HoverRing" CornerRadius="8" BorderThickness="2"
+                      BorderBrush="#0078D4" Background="#080060EE"
+                      Opacity="0" IsHitTestVisible="False"/>
+            </Grid>
             <ControlTemplate.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="Bd" Property="Background" Value="#1D1D25"/>
-                <Setter TargetName="Bd" Property="BorderBrush" Value="#4A80F0"/>
-                <Setter TargetName="EditHint" Property="Opacity" Value="1"/>
+                <Trigger.EnterActions>
+                  <BeginStoryboard>
+                    <Storyboard>
+                      <DoubleAnimation Storyboard.TargetName="HoverRing"
+                                       Storyboard.TargetProperty="Opacity"
+                                       To="1" Duration="0:0:0.15"/>
+                      <DoubleAnimation Storyboard.TargetName="EditHint"
+                                       Storyboard.TargetProperty="Opacity"
+                                       To="1" Duration="0:0:0.15"/>
+                    </Storyboard>
+                  </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                  <BeginStoryboard>
+                    <Storyboard>
+                      <DoubleAnimation Storyboard.TargetName="HoverRing"
+                                       Storyboard.TargetProperty="Opacity"
+                                       To="0" Duration="0:0:0.2"/>
+                      <DoubleAnimation Storyboard.TargetName="EditHint"
+                                       Storyboard.TargetProperty="Opacity"
+                                       To="0" Duration="0:0:0.2"/>
+                    </Storyboard>
+                  </BeginStoryboard>
+                </Trigger.ExitActions>
               </Trigger>
               <Trigger Property="IsPressed" Value="True">
-                <Setter TargetName="Bd" Property="Background" Value="#16161E"/>
-                <Setter TargetName="Bd" Property="BorderBrush" Value="#3A70E0"/>
+                <Setter TargetName="HoverRing" Property="BorderBrush" Value="#005BA1"/>
+                <Setter TargetName="HoverRing" Property="Background"  Value="#120060EE"/>
               </Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>
@@ -59,9 +82,10 @@
 
     <!-- Header -->
     <StackPanel Grid.Row="0">
-      <TextBlock Text="Dashboard" FontSize="22" FontWeight="Bold" Foreground="White"/>
+      <TextBlock Text="Dashboard" FontSize="22" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrTextPrimary}"/>
       <TextBlock Text="9 konfigurierbare Tasten — klicken zum Bearbeiten"
-                 FontSize="12" Foreground="#707080" Margin="0,4,0,0"/>
+                 FontSize="12" Foreground="{DynamicResource BrTextSecondary}" Margin="0,4,0,0"/>
     </StackPanel>
 
     <!-- Button grid -->
@@ -74,8 +98,7 @@
       <ItemsControl.ItemTemplate>
         <DataTemplate DataType="{x:Type vm:ButtonViewModel}">
           <Button Style="{StaticResource CardBtn}"
-                  Margin="6"
-                  MinHeight="126"
+                  Margin="6" MinHeight="126"
                   Click="ButtonCard_Click"
                   Tag="{Binding Number}">
             <Grid>
@@ -86,24 +109,22 @@
                 <RowDefinition Height="36"/>
               </Grid.RowDefinitions>
 
-              <!-- Button number -->
               <TextBlock Grid.Row="0"
                          Text="{Binding Number, StringFormat='B{0}'}"
-                         FontSize="10" FontWeight="Bold" Foreground="#606070"
+                         FontSize="10" FontWeight="SemiBold"
+                         Foreground="{DynamicResource BrTextHint}"
                          Margin="14,10,0,0" VerticalAlignment="Top"/>
 
-              <!-- Type badge -->
-              <Border Grid.Row="1" Background="{Binding TypeBrush}" CornerRadius="6"
+              <Border Grid.Row="1" Background="{Binding TypeBrush}" CornerRadius="4"
                       Padding="12,5" HorizontalAlignment="Center" VerticalAlignment="Center"
                       Margin="12,0">
-                <TextBlock Text="{Binding TypeLabel}" FontSize="11" FontWeight="Bold"
+                <TextBlock Text="{Binding TypeLabel}" FontSize="11" FontWeight="SemiBold"
                            Foreground="White"/>
               </Border>
 
-              <!-- Preview text -->
               <TextBlock Grid.Row="2"
                          Text="{Binding Preview}"
-                         FontSize="11" Foreground="#8888A0"
+                         FontSize="11" Foreground="{DynamicResource BrTextSecondary}"
                          TextTrimming="CharacterEllipsis"
                          TextAlignment="Center"
                          HorizontalAlignment="Center"
@@ -115,9 +136,9 @@
       </ItemsControl.ItemTemplate>
     </ItemsControl>
 
-    <!-- Footer note -->
+    <!-- Footer -->
     <TextBlock Grid.Row="3" Margin="6,14,0,0"
                Text="⌨  Media-Taste (physisch) → immer Play/Pause, nicht konfigurierbar"
-               FontSize="11" Foreground="#606070"/>
+               FontSize="11" Foreground="{DynamicResource BrTextHint}"/>
   </Grid>
 </Page>

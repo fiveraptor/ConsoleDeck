@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using ConsoleDeck.Core;
 using ConsoleDeck.Models;
@@ -14,6 +13,7 @@ public partial class SettingsPage : Page
         InitializeComponent();
         LoadSettings();
         App.Discord.StatusChanged += OnDiscordStatusChanged;
+        ThemeService.ThemeChanged += OnThemeChanged;
         UpdateDiscordBadge(App.Discord.Status);
     }
 
@@ -40,21 +40,28 @@ public partial class SettingsPage : Page
     private void OnDiscordStatusChanged(DiscordStatus status)
         => Dispatcher.Invoke(() => UpdateDiscordBadge(status));
 
+    private void OnThemeChanged()
+        => Dispatcher.Invoke(() => UpdateDiscordBadge(App.Discord.Status));
+
     private void UpdateDiscordBadge(DiscordStatus status)
     {
-        (DiscordStatusText.Text, DiscordStatusBadge.Background) = status switch
+        bool dark = ThemeService.IsDark;
+        (DiscordStatusText.Text, DiscordStatusBadge.Background, DiscordStatusText.Foreground) = status switch
         {
-            DiscordStatus.Connected  => ("Verbunden",     new SolidColorBrush(Color.FromRgb(20, 55, 30))),
-            DiscordStatus.Connecting => ("Verbindet…",    new SolidColorBrush(Color.FromRgb(50, 40, 15))),
-            _                        => ("Nicht verbunden", new SolidColorBrush(Color.FromRgb(40, 20, 20))),
-        };
-        DiscordStatusText.Foreground = status switch
-        {
-            DiscordStatus.Connected  => new SolidColorBrush(Color.FromRgb(80, 200, 100)),
-            DiscordStatus.Connecting => new SolidColorBrush(Colors.Gold),
-            _                        => new SolidColorBrush(Color.FromRgb(180, 70, 70)),
+            DiscordStatus.Connected  => ("Verbunden",
+                Brush(dark ? (30, 70, 40)   : (223, 246, 221)),
+                Brush(dark ? (100, 210, 120) : (16, 124, 16))),
+            DiscordStatus.Connecting => ("Verbindet…",
+                Brush(dark ? (60, 50, 20)   : (255, 244, 206)),
+                Brush(dark ? (210, 170, 60)  : (131, 92, 0))),
+            _                        => ("Nicht verbunden",
+                Brush(dark ? (50, 50, 50)   : (243, 243, 243)),
+                Brush(dark ? (140, 140, 140) : (92, 92, 92))),
         };
     }
+
+    private static SolidColorBrush Brush((int r, int g, int b) c)
+        => new(Color.FromRgb((byte)c.r, (byte)c.g, (byte)c.b));
 
     private void SaveDiscord_Click(object sender, RoutedEventArgs e)
     {
@@ -94,20 +101,22 @@ public partial class SettingsPage : Page
 
     private async void TestHa_Click(object sender, RoutedEventArgs e)
     {
+        bool dark = ThemeService.IsDark;
         HaTestResult.Text       = "Teste…";
-        HaTestResult.Foreground = new SolidColorBrush(Colors.Gray);
+        HaTestResult.Foreground = Brush(dark ? (140, 140, 140) : (92, 92, 92));
+
         var ok = await App.HomeAssistant.TestConnectionAsync(
             TbHaUrl.Text.Trim().TrimEnd('/'),
             PbHaToken.Password);
+
         HaTestResult.Text       = ok ? "✓ Verbunden" : "✗ Fehler";
         HaTestResult.Foreground = ok
-            ? new SolidColorBrush(Color.FromRgb(80, 200, 100))
-            : new SolidColorBrush(Color.FromRgb(200, 70, 70));
+            ? Brush(dark ? (100, 210, 120) : (16, 124, 16))
+            : Brush(dark ? (210, 90, 90)   : (168, 0, 0));
     }
 
     private void ShowToast(string msg)
     {
-        if (Window.GetWindow(this) is MainWindow mw)
-            mw.ShowToast(msg);
+        if (Window.GetWindow(this) is MainWindow mw) mw.ShowToast(msg);
     }
 }

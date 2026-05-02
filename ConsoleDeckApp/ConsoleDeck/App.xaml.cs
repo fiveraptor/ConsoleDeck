@@ -38,7 +38,7 @@ public partial class App : Application
         bool silent = e.Args.Contains("--silent");
 
         base.OnStartup(e);
-        Wpf.Ui.Appearance.ApplicationThemeManager.Apply(Wpf.Ui.Appearance.ApplicationTheme.Dark);
+        ThemeService.Init();
 
         _trayIcon = (TaskbarIcon)FindResource("TrayIcon");
         _trayIcon.ForceCreate(false);

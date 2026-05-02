@@ -1,0 +1,28 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Backgrounds -->
+  <SolidColorBrush x:Key="BrPageBg"    Color="#202020"/>
+  <SolidColorBrush x:Key="BrSidebarBg" Color="#2B2B2B"/>
+  <SolidColorBrush x:Key="BrCardBg"    Color="#2D2D2D"/>
+  <SolidColorBrush x:Key="BrFormBg"    Color="#202020"/>
+  <!-- Borders / Dividers -->
+  <SolidColorBrush x:Key="BrDivider"    Color="#404040"/>
+  <SolidColorBrush x:Key="BrCardBorder" Color="#383838"/>
+  <!-- Text -->
+  <SolidColorBrush x:Key="BrTextPrimary"   Color="#FFFFFF"/>
+  <SolidColorBrush x:Key="BrTextSecondary" Color="#ABABAB"/>
+  <SolidColorBrush x:Key="BrTextHint"      Color="#767676"/>
+  <!-- Navigation -->
+  <SolidColorBrush x:Key="BrNavHoverBg"    Color="#383838"/>
+  <SolidColorBrush x:Key="BrNavSelectedBg" Color="#003652"/>
+  <SolidColorBrush x:Key="BrNavSelectedFg" Color="#60CDFF"/>
+  <!-- Inputs -->
+  <SolidColorBrush x:Key="BrInputBg"     Color="#1C1C1C"/>
+  <SolidColorBrush x:Key="BrInputBorder" Color="#555555"/>
+  <!-- Ghost Button base -->
+  <SolidColorBrush x:Key="BrGhostBg"     Color="#2D2D2D"/>
+  <SolidColorBrush x:Key="BrGhostBorder" Color="#555555"/>
+  <!-- Toast -->
+  <SolidColorBrush x:Key="BrToastBg" Color="#3D3D3D"/>
+  <SolidColorBrush x:Key="BrToastFg" Color="#FFFFFF"/>
+</ResourceDictionary>
