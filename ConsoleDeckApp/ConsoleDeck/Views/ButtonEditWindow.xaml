@@ -231,6 +231,10 @@
             <TextBlock Style="{StaticResource CatHeader}" Text="HOME ASSISTANT"/>
             <RadioButton x:Name="RbHa"     Style="{StaticResource TypeRadio}" Content="Home Assistant"   Tag="homeassistant"  Checked="TypeChanged"/>
 
+            <TextBlock Style="{StaticResource CatHeader}" Text="AUDIO"/>
+            <RadioButton x:Name="RbAudioDev"    Style="{StaticResource TypeRadio}" Content="Gerät setzen"   Tag="audio_device" Checked="TypeChanged"/>
+            <RadioButton x:Name="RbAudioToggle" Style="{StaticResource TypeRadio}" Content="Gerät wechseln" Tag="audio_toggle" Checked="TypeChanged"/>
+
             <TextBlock Style="{StaticResource CatHeader}" Text="SONSTIGES"/>
             <RadioButton x:Name="RbNone"   Style="{StaticResource TypeRadio}" Content="Keine Aktion"     Tag="none"           Checked="TypeChanged"/>
           </StackPanel>
@@ -292,6 +296,34 @@
               <ComboBoxItem Content="turn_on"/>
               <ComboBoxItem Content="turn_off"/>
             </ComboBox>
+          </StackPanel>
+
+          <StackPanel x:Name="PanelAudioDevice" Visibility="Collapsed">
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Audiogerät"/>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Klick auf den Button setzt dieses Gerät als Standard-Audioausgang."/>
+            <ComboBox x:Name="CbAudioDevice"
+                      Background="{DynamicResource BrInputBg}"
+                      Foreground="{DynamicResource BrTextPrimary}"
+                      BorderBrush="{DynamicResource BrInputBorder}"
+                      FontSize="13" Padding="10,7" Margin="0,0,0,14"/>
+          </StackPanel>
+
+          <StackPanel x:Name="PanelAudioToggle" Visibility="Collapsed">
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Wechselt abwechselnd zwischen zwei Audiogeräten."/>
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Gerät 1"/>
+            <ComboBox x:Name="CbAudioToggle1"
+                      Background="{DynamicResource BrInputBg}"
+                      Foreground="{DynamicResource BrTextPrimary}"
+                      BorderBrush="{DynamicResource BrInputBorder}"
+                      FontSize="13" Padding="10,7" Margin="0,0,0,14"/>
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Gerät 2"/>
+            <ComboBox x:Name="CbAudioToggle2"
+                      Background="{DynamicResource BrInputBg}"
+                      Foreground="{DynamicResource BrTextPrimary}"
+                      BorderBrush="{DynamicResource BrInputBorder}"
+                      FontSize="13" Padding="10,7" Margin="0,0,0,14"/>
           </StackPanel>
 
           <StackPanel x:Name="PanelNoInput" Visibility="Collapsed">

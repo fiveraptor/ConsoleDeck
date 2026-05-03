@@ -80,7 +80,9 @@ public partial class ButtonViewModel : ObservableObject
         ["play_pause"] = "PLAY", ["next_track"] = "NEXT", ["prev_track"] = "PREV", ["stop"] = "STOP",
         ["mute"] = "MUTE", ["hotkey"] = "KEY",
         ["discord_mute"] = "MUTE", ["discord_deafen"] = "DEAF", ["discord_leave"] = "LEAVE",
-        ["homeassistant"] = "HA", ["none"] = "NONE",
+        ["homeassistant"] = "HA",
+        ["audio_device"] = "AUDIO", ["audio_toggle"] = "AUDIO",
+        ["none"] = "NONE",
     };
 
     private static readonly Dictionary<string, string> TypeColors = new()
@@ -89,6 +91,8 @@ public partial class ButtonViewModel : ObservableObject
         ["play_pause"] = "#3366CC", ["next_track"] = "#3366CC", ["prev_track"] = "#3366CC", ["stop"] = "#3366CC",
         ["mute"] = "#9933CC", ["hotkey"] = "#CCAA00",
         ["discord_mute"] = "#7B68EE", ["discord_deafen"] = "#7B68EE", ["discord_leave"] = "#CC3333",
-        ["homeassistant"] = "#FF9800", ["none"] = "#555555",
+        ["homeassistant"] = "#FF9800",
+        ["audio_device"] = "#00AABB", ["audio_toggle"] = "#00AABB",
+        ["none"] = "#555555",
     };
 }

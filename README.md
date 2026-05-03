@@ -16,6 +16,7 @@ A custom macro deck powered by an Arduino — control media, apps, hotkeys, Disc
 - **Windows-style UI** — light/dark mode follows Windows system setting
 - **Discord integration** — mute, deafen, leave voice channel via RPC
 - **Home Assistant integration** — toggle/control any HA entity
+- **Audio device switching** — assign a button to switch to a specific output device or toggle between two
 - **System tray** — runs silently in the background, optional autostart
 
 **Available button actions:**
@@ -34,6 +35,8 @@ A custom macro deck powered by an Arduino — control media, apps, hotkeys, Disc
 | `discord_deafen` | Toggle Discord deafen |
 | `discord_leave` | Leave Discord voice channel |
 | `homeassistant` | Control a Home Assistant entity (toggle / turn_on / turn_off) |
+| `audio_device` | Switch to a specific audio output device |
+| `audio_toggle` | Toggle between two audio output devices |
 
 ---
 
@@ -100,7 +103,7 @@ dotnet publish ConsoleDeckApp\ConsoleDeck\ConsoleDeck.csproj `
   -c Release -r win-x64 --self-contained -o dist
 
 # Build installer (optional)
-iscc /DAppVersion=2.2.0 installer.iss
+iscc /DAppVersion=2.3.0 installer.iss
 ```
 
 Or use the GitHub Actions workflow — any push to a `v*` tag automatically builds and publishes a release.

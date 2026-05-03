@@ -43,6 +43,13 @@ public class ActionExecutor
             case "homeassistant" when action.Value.Length > 0:
                 _ha.CallService(action.Value, action.HaAction ?? "toggle");
                 break;
+            case "audio_device" when action.Value.Length > 0:
+                AudioService.SetDefaultDevice(action.Value);
+                break;
+            case "audio_toggle" when action.Value.Contains('|'):
+                var pts = action.Value.Split('|', 2);
+                AudioService.ToggleDevice(pts[0], pts[1]);
+                break;
         }
     }
 
