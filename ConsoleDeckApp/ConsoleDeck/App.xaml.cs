@@ -8,6 +8,7 @@ namespace ConsoleDeck;
 public partial class App : Application
 {
     private static readonly Mutex _mutex = new(false, "ConsoleDeck-SingleInstance");
+    private static readonly EventWaitHandle _showEvent = new(false, EventResetMode.AutoReset, "ConsoleDeck-ShowWindow");
     private bool _mutexOwned;
 
     public static ConfigService Config { get; } = new();
@@ -30,7 +31,7 @@ public partial class App : Application
 
         if (!_mutexOwned)
         {
-            MessageBox.Show("ConsoleDeck läuft bereits.", "ConsoleDeck", MessageBoxButton.OK, MessageBoxImage.Information);
+            _showEvent.Set(); // Signal the running instance to bring its window to front
             Current.Shutdown();
             return;
         }
@@ -51,6 +52,12 @@ public partial class App : Application
             mainWindow.Show();
             mainWindow.Activate();
         }
+
+        _ = Task.Run(() =>
+        {
+            try { while (true) { _showEvent.WaitOne(); Dispatcher.Invoke(ShowMainWindow); } }
+            catch (ObjectDisposedException) { }
+        });
 
         Config.StartWatching();
         Serial.Start();
@@ -86,6 +93,7 @@ public partial class App : Application
         Serial.Stop();
         Discord.Disconnect();
         _trayIcon?.Dispose();
+        _showEvent.Dispose();
         if (_mutexOwned) _mutex.ReleaseMutex();
         _mutex.Dispose();
         base.OnExit(e);
