@@ -1,6 +1,6 @@
 # ConsoleDeck V2
 
-A custom macro deck powered by an Arduino — control media, apps, hotkeys and Discord directly from physical buttons and an encoder knob.
+A custom macro deck powered by an Arduino — control media, apps, hotkeys, Discord and Home Assistant directly from physical buttons and a rotary encoder.
 
 > Based on [LucaDiLorenzo98/cd_v2_script](https://github.com/LucaDiLorenzo98/cd_v2_script) with significant improvements.
 
@@ -8,14 +8,32 @@ A custom macro deck powered by an Arduino — control media, apps, hotkeys and D
 
 ## Features
 
-- 9 configurable buttons
-- Rotary encoder for volume control (turn = volume, press = mute)
-- 1 dedicated media button (play/pause)
-- Automatic Arduino detection — no manual COM port configuration
-- System tray icon with quick access to config and quit
-- Discord integration (mute, deafen, leave channel)
-- CLI configuration tool
-- Windows installer with optional autostart
+- **9 configurable buttons** — each button can be assigned any action
+- **Rotary encoder** — turn for volume, press to mute
+- **1 dedicated media button** — always play/pause
+- **Profiles** — create multiple button layouts and switch between them instantly
+- **Automatic Arduino detection** — no manual COM port configuration
+- **Windows-style UI** — light/dark mode follows Windows system setting
+- **Discord integration** — mute, deafen, leave voice channel via RPC
+- **Home Assistant integration** — toggle/control any HA entity
+- **System tray** — runs silently in the background, optional autostart
+
+**Available button actions:**
+
+| Type | Description |
+|---|---|
+| `link` | Open a URL in the default browser |
+| `exe` | Launch an application |
+| `hotkey` | Send a keyboard shortcut (e.g. `ctrl+shift+s`) |
+| `play_pause` | Media play/pause |
+| `next_track` | Next track |
+| `prev_track` | Previous track |
+| `stop` | Stop media |
+| `mute` | Toggle system mute |
+| `discord_mute` | Toggle Discord microphone |
+| `discord_deafen` | Toggle Discord deafen |
+| `discord_leave` | Leave Discord voice channel |
+| `homeassistant` | Control a Home Assistant entity (toggle / turn_on / turn_off) |
 
 ---
 
@@ -40,73 +58,52 @@ A custom macro deck powered by an Arduino — control media, apps, hotkeys and D
 Go to the [Releases](../../releases) page and download the latest version.
 
 Two options are available:
-- **`ConsoleDeck-Setup-vX.X.X.exe`** — recommended, installs like any Windows app with Start Menu shortcuts and optional autostart
+- **`ConsoleDeck-Setup-vX.X.X.exe`** — recommended, installs with Start Menu shortcuts and optional autostart
 - **`ConsoleDeck-vX.X.X-portable.zip`** — no installation needed, just extract and run
 
-### 3. Configure your buttons
+### 3. Run & Configure
 
-Run `consoledeck-config.exe` (or open it from the tray icon menu) and follow the prompts to assign actions to each button.
+Launch `ConsoleDeck.exe`. The main window opens with a **Dashboard** and a **Settings** page.
 
-**Available action types:**
+- **Dashboard** — click any of the 9 button cards to configure that button
+- **Settings** — configure Discord and Home Assistant credentials, toggle autostart
+- **Profiles** — use the dropdown in the sidebar to create, rename, switch, or delete profiles; each profile stores its own set of 9 button assignments
 
-| Type | Description |
-|---|---|
-| `link` | Open a URL in your browser |
-| `exe` | Launch an application |
-| `hotkey` | Send a keyboard shortcut (e.g. `ctrl+shift+s`) |
-| `play_pause` | Media play/pause |
-| `next_track` | Next track |
-| `prev_track` | Previous track |
-| `stop` | Stop media |
-| `mute` | Toggle system mute |
-| `discord_mute` | Toggle Discord microphone |
-| `discord_deafen` | Toggle Discord deafen |
-| `discord_leave` | Leave Discord voice channel |
-| `homeassistant` | Control a Home Assistant device (toggle / turn_on / turn_off) |
-
-### 4. Run ConsoleDeck
-
-Double-click `consoledeck.exe`. It will automatically detect your Arduino and start running in the background.
-
-A tray icon will appear in the system tray (bottom right). Right-click it to:
-- **Open Config** — launch the configuration tool
-- **Quit** — stop ConsoleDeck
-
-If you used the installer, you can optionally enable autostart during setup so ConsoleDeck launches automatically with Windows.
+The app runs in the system tray after closing the window. Right-click the tray icon to reopen it or quit.
 
 ---
 
 ## Home Assistant Integration
 
-1. In Home Assistant: **Profil** (bottom left) → **Sicherheit** → **Long-Lived Access Token erstellen**
-2. Run `consoledeck-config.exe` → **Settings → Home Assistant** and enter your HA URL and the token
-3. When configuring a button, choose **HA** and enter the entity ID (e.g. `light.wohnzimmer`) and the action (`toggle`, `turn_on`, or `turn_off`)
+1. In Home Assistant: **Profile** (bottom left) → **Security** → **Create Long-Lived Access Token**
+2. In ConsoleDeck: open **Settings → Home Assistant**, enter your HA URL and token, click **Save**
+3. When configuring a button, select **HA**, enter the entity ID (e.g. `light.living_room`) and choose an action (`toggle`, `turn_on`, or `turn_off`)
 
 ---
 
 ## Discord Integration
 
 1. Go to the [Discord Developer Portal](https://discord.com/developers/applications) and create a new application
-2. Under **OAuth2**, copy the **Client ID** and **Client Secret**
-3. Run `consoledeck-config.exe` → go to **Settings → Discord** and enter both values
-4. Restart `consoledeck.exe` — a Discord authorization popup will appear on first connect
+2. Under **OAuth2**, add `http://localhost` as a Redirect URI, then copy the **Client ID** and **Client Secret**
+3. In ConsoleDeck: open **Settings → Discord**, enter both values, click **Save**
+4. A Discord authorization popup will appear — confirm it to connect
 
 ---
 
 ## Building from Source
 
+Requires [.NET 9 SDK](https://dotnet.microsoft.com/download) and [Inno Setup](https://jrsoftware.org/isinfo.php) (for the installer).
+
 ```powershell
-# Install dependencies
-pip install pyserial pypresence requests rich pyinstaller pystray pillow
+# Publish self-contained Windows executable
+dotnet publish ConsoleDeckApp\ConsoleDeck\ConsoleDeck.csproj `
+  -c Release -r win-x64 --self-contained -o dist
 
-# Build both executables (add -Install to install dependencies automatically)
-.\build.ps1
-
-# Also build the installer (requires Inno Setup: https://jrsoftware.org/isinfo.php)
-.\build.ps1 -Version 1.0.0
+# Build installer (optional)
+iscc /DAppVersion=2.2.0 installer.iss
 ```
 
-Output: `dist\consoledeck.exe`, `dist\consoledeck-config.exe`, `Output\ConsoleDeck-Setup-1.0.0.exe`
+Or use the GitHub Actions workflow — any push to a `v*` tag automatically builds and publishes a release.
 
 ---
 
@@ -123,4 +120,4 @@ Wiring for the Arduino Uno:
 | Button 8–9 | A0, A1 |
 | Media button | 2 |
 
-All buttons are wired with `INPUT_PULLUP` (connect between pin and GND).
+All buttons use `INPUT_PULLUP` (connect between pin and GND).
