@@ -224,9 +224,12 @@
             <RadioButton x:Name="RbHotkey" Style="{StaticResource TypeRadio}" Content="Tastenkürzel"     Tag="hotkey"         Checked="TypeChanged"/>
 
             <TextBlock Style="{StaticResource CatHeader}" Text="DISCORD"/>
-            <RadioButton x:Name="RbDMute"  Style="{StaticResource TypeRadio}" Content="Mute / Unmute"      Tag="discord_mute"   Checked="TypeChanged"/>
-            <RadioButton x:Name="RbDDeaf"  Style="{StaticResource TypeRadio}" Content="Deafen / Undeafen"  Tag="discord_deafen" Checked="TypeChanged"/>
-            <RadioButton x:Name="RbDLeave" Style="{StaticResource TypeRadio}" Content="Channel verlassen"  Tag="discord_leave"  Checked="TypeChanged"/>
+            <RadioButton x:Name="RbDMute"   Style="{StaticResource TypeRadio}" Content="Mute / Unmute"       Tag="discord_mute"        Checked="TypeChanged"/>
+            <RadioButton x:Name="RbDDeaf"   Style="{StaticResource TypeRadio}" Content="Deafen / Undeafen"   Tag="discord_deafen"      Checked="TypeChanged"/>
+            <RadioButton x:Name="RbDLeave"  Style="{StaticResource TypeRadio}" Content="Channel verlassen"   Tag="discord_leave"       Checked="TypeChanged"/>
+            <RadioButton x:Name="RbDVideo"  Style="{StaticResource TypeRadio}" Content="Kamera ein/aus"      Tag="discord_video"       Checked="TypeChanged"/>
+            <RadioButton x:Name="RbDStream" Style="{StaticResource TypeRadio}" Content="Screenshare ein/aus" Tag="discord_screenshare" Checked="TypeChanged"/>
+            <RadioButton x:Name="RbDJoin"   Style="{StaticResource TypeRadio}" Content="Channel beitreten"   Tag="discord_join"        Checked="TypeChanged"/>
 
             <TextBlock Style="{StaticResource CatHeader}" Text="HOME ASSISTANT"/>
             <RadioButton x:Name="RbHa"     Style="{StaticResource TypeRadio}" Content="Home Assistant"   Tag="homeassistant"  Checked="TypeChanged"/>
@@ -324,6 +327,14 @@
                       Foreground="{DynamicResource BrTextPrimary}"
                       BorderBrush="{DynamicResource BrInputBorder}"
                       FontSize="13" Padding="10,7" Margin="0,0,0,14"/>
+          </StackPanel>
+
+          <StackPanel x:Name="PanelDiscordJoin" Visibility="Collapsed">
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Voice-Channel-ID"/>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Rechtsklick auf den Channel in Discord → ID kopieren.&#x0a;Voraussetzung: Einstellungen → Erscheinungsbild → Entwicklermodus aktivieren."/>
+            <ui:TextBox x:Name="TbDiscordChannelId" Style="{StaticResource Input}"
+                        PlaceholderText="123456789012345678"/>
           </StackPanel>
 
           <StackPanel x:Name="PanelNoInput" Visibility="Collapsed">

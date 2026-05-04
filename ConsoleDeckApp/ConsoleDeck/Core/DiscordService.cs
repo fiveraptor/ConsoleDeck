@@ -128,7 +128,10 @@ public class DiscordService
         await c.SetVoiceSettingsAsync(deaf: !deaf);
     });
 
-    public void LeaveChannel() => RunAction(c => c.LeaveVoiceChannelAsync());
+    public void LeaveChannel()      => RunAction(c => c.LeaveVoiceChannelAsync());
+    public void ToggleVideo()       => RunActionSoft(c => c.ToggleVideoAsync());
+    public void ToggleScreenShare() => RunActionSoft(c => c.ToggleScreenShareAsync());
+    public void JoinChannel(string channelId) => RunAction(c => c.JoinChannelAsync(channelId));
 
     private void RunAction(Func<DiscordIpcClient, Task> action)
     {
@@ -142,6 +145,16 @@ public class DiscordService
                 _client = null;
                 SetStatus(DiscordStatus.Disconnected);
             }
+        });
+    }
+
+    private void RunActionSoft(Func<DiscordIpcClient, Task> action)
+    {
+        if (_client == null) return;
+        Task.Run(async () =>
+        {
+            try { await action(_client); }
+            catch { }
         });
     }
 
@@ -249,7 +262,7 @@ internal class DiscordIpcClient : IDisposable
             var resp = await SendCommandAsync("AUTHORIZE", new
             {
                 client_id = clientId,
-                scopes    = new[] { "rpc", "rpc.voice.read", "rpc.voice.write" },
+                scopes    = new[] { "rpc", "rpc.voice.read", "rpc.voice.write", "rpc.video.read", "rpc.video.write" },
             });
             if (resp.TryGetProperty("data", out var data) &&
                 data.TryGetProperty("code", out var code))
@@ -272,6 +285,15 @@ internal class DiscordIpcClient : IDisposable
 
     public Task<JsonElement> LeaveVoiceChannelAsync()
         => SendCommandAsync("SELECT_VOICE_CHANNEL", new Dictionary<string, object?> { ["channel_id"] = null });
+
+    public Task<JsonElement> JoinChannelAsync(string channelId)
+        => SendCommandAsync("SELECT_VOICE_CHANNEL", new { channel_id = channelId, force = true });
+
+    public Task<JsonElement> ToggleVideoAsync()
+        => SendCommandAsync("TOGGLE_VIDEO", new { });
+
+    public Task<JsonElement> ToggleScreenShareAsync()
+        => SendCommandAsync("TOGGLE_SCREENSHARE", new { });
 
     private async Task<JsonElement> SendCommandAsync(string cmd, object args)
     {

@@ -54,6 +54,7 @@ public partial class ButtonEditWindow : Window
         TbFocus.Text = action.Focus ?? "";
         TbHotkey.Text = action.Value;
         TbEntityId.Text = action.Value;
+        TbDiscordChannelId.Text = action.Value;
 
         var haAction = action.HaAction ?? "toggle";
         foreach (ComboBoxItem item in CbHaAction.Items)
@@ -94,6 +95,7 @@ public partial class ButtonEditWindow : Window
             ["play_pause"] = RbPlay, ["next_track"] = RbNext, ["prev_track"] = RbPrev, ["stop"] = RbStop,
             ["mute"] = RbMute, ["hotkey"] = RbHotkey,
             ["discord_mute"] = RbDMute, ["discord_deafen"] = RbDDeaf, ["discord_leave"] = RbDLeave,
+            ["discord_video"] = RbDVideo, ["discord_screenshare"] = RbDStream, ["discord_join"] = RbDJoin,
             ["homeassistant"] = RbHa,
             ["audio_device"] = RbAudioDev, ["audio_toggle"] = RbAudioToggle,
             ["none"] = RbNone,
@@ -107,8 +109,9 @@ public partial class ButtonEditWindow : Window
     private string GetSelectedType()
     {
         var radios = new[] { RbLink, RbExe, RbPlay, RbNext, RbPrev, RbStop,
-                             RbMute, RbHotkey, RbDMute, RbDDeaf, RbDLeave, RbHa,
-                             RbAudioDev, RbAudioToggle, RbNone };
+                             RbMute, RbHotkey, RbDMute, RbDDeaf, RbDLeave,
+                             RbDVideo, RbDStream, RbDJoin,
+                             RbHa, RbAudioDev, RbAudioToggle, RbNone };
         foreach (var rb in radios)
             if (rb.IsChecked == true)
                 return rb.Tag?.ToString() ?? "none";
@@ -124,22 +127,24 @@ public partial class ButtonEditWindow : Window
 
     private void ShowPanel(string type)
     {
-        PanelLink.Visibility        = Visibility.Collapsed;
-        PanelExe.Visibility         = Visibility.Collapsed;
-        PanelHotkey.Visibility      = Visibility.Collapsed;
-        PanelHa.Visibility          = Visibility.Collapsed;
-        PanelAudioDevice.Visibility = Visibility.Collapsed;
-        PanelAudioToggle.Visibility = Visibility.Collapsed;
-        PanelNoInput.Visibility     = Visibility.Collapsed;
+        PanelLink.Visibility         = Visibility.Collapsed;
+        PanelExe.Visibility          = Visibility.Collapsed;
+        PanelHotkey.Visibility       = Visibility.Collapsed;
+        PanelHa.Visibility           = Visibility.Collapsed;
+        PanelAudioDevice.Visibility  = Visibility.Collapsed;
+        PanelAudioToggle.Visibility  = Visibility.Collapsed;
+        PanelDiscordJoin.Visibility  = Visibility.Collapsed;
+        PanelNoInput.Visibility      = Visibility.Collapsed;
 
         switch (type)
         {
-            case "link":          PanelLink.Visibility        = Visibility.Visible; break;
-            case "exe":           PanelExe.Visibility         = Visibility.Visible; break;
-            case "hotkey":        PanelHotkey.Visibility      = Visibility.Visible; break;
-            case "homeassistant": PanelHa.Visibility          = Visibility.Visible; break;
-            case "audio_device":  PanelAudioDevice.Visibility = Visibility.Visible; break;
-            case "audio_toggle":  PanelAudioToggle.Visibility = Visibility.Visible; break;
+            case "link":              PanelLink.Visibility        = Visibility.Visible; break;
+            case "exe":               PanelExe.Visibility         = Visibility.Visible; break;
+            case "hotkey":            PanelHotkey.Visibility      = Visibility.Visible; break;
+            case "homeassistant":     PanelHa.Visibility          = Visibility.Visible; break;
+            case "audio_device":      PanelAudioDevice.Visibility = Visibility.Visible; break;
+            case "audio_toggle":      PanelAudioToggle.Visibility = Visibility.Visible; break;
+            case "discord_join":      PanelDiscordJoin.Visibility = Visibility.Visible; break;
             default:
                 PanelNoInput.Visibility = Visibility.Visible;
                 TbNoInputHint.Text = GetNoInputHint(type);
@@ -154,10 +159,12 @@ public partial class ButtonEditWindow : Window
         "prev_track"     => "Sendet den 'Vorheriger Titel'-Medienkey.",
         "stop"           => "Sendet den Stop-Medienkey.",
         "mute"           => "Schaltet die System-Stummschaltung ein/aus.",
-        "discord_mute"   => "Schaltet das Mikrofon in Discord stumm oder ein.",
-        "discord_deafen" => "Aktiviert / deaktiviert das Deafen in Discord.",
-        "discord_leave"  => "Verlässt den aktuellen Discord-Sprachkanal.",
-        "none"           => "Dieser Button hat keine Aktion.",
+        "discord_mute"        => "Schaltet das Mikrofon in Discord stumm oder ein.",
+        "discord_deafen"      => "Aktiviert / deaktiviert das Deafen in Discord.",
+        "discord_leave"       => "Verlässt den aktuellen Discord-Sprachkanal.",
+        "discord_video"       => "Schaltet die Kamera in Discord ein oder aus.\nHinweis: Funktioniert nur im aktiven Voice-Call.",
+        "discord_screenshare" => "Startet oder beendet den Screen-Share in Discord.\nHinweis: Funktioniert nur im aktiven Voice-Call.",
+        "none"                => "Dieser Button hat keine Aktion.",
         _ => "",
     };
 
@@ -202,6 +209,9 @@ public partial class ButtonEditWindow : Window
                 var id2 = SelectedId(CbAudioToggle2);
                 if (id1.Length > 0 && id2.Length > 0)
                     action.Value = $"{id1}|{id2}";
+                break;
+            case "discord_join":
+                action.Value = TbDiscordChannelId.Text.Trim();
                 break;
         }
 
