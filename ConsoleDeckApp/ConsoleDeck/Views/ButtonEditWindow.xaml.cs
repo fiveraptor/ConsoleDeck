@@ -55,6 +55,7 @@ public partial class ButtonEditWindow : Window
         TbHotkey.Text = action.Value;
         TbEntityId.Text = action.Value;
         TbDiscordChannelId.Text = action.Value;
+        TbDiscordKey.Text = action.Value;
 
         var haAction = action.HaAction ?? "toggle";
         foreach (ComboBoxItem item in CbHaAction.Items)
@@ -133,6 +134,7 @@ public partial class ButtonEditWindow : Window
         PanelHa.Visibility           = Visibility.Collapsed;
         PanelAudioDevice.Visibility  = Visibility.Collapsed;
         PanelAudioToggle.Visibility  = Visibility.Collapsed;
+        PanelDiscordKey.Visibility   = Visibility.Collapsed;
         PanelDiscordJoin.Visibility  = Visibility.Collapsed;
         PanelNoInput.Visibility      = Visibility.Collapsed;
 
@@ -145,6 +147,14 @@ public partial class ButtonEditWindow : Window
             case "audio_device":      PanelAudioDevice.Visibility = Visibility.Visible; break;
             case "audio_toggle":      PanelAudioToggle.Visibility = Visibility.Visible; break;
             case "discord_join":      PanelDiscordJoin.Visibility = Visibility.Visible; break;
+            case "discord_video":
+                TbDiscordKeyHint.Text = "Discord: Einstellungen → Keybinds → Keybind hinzufügen → \"Kamera umschalten\".\nTrag hier dieselbe Kombination ein.";
+                PanelDiscordKey.Visibility = Visibility.Visible;
+                break;
+            case "discord_screenshare":
+                TbDiscordKeyHint.Text = "Discord: Einstellungen → Keybinds → Keybind hinzufügen → \"Go Live umschalten\".\nTrag hier dieselbe Kombination ein.";
+                PanelDiscordKey.Visibility = Visibility.Visible;
+                break;
             default:
                 PanelNoInput.Visibility = Visibility.Visible;
                 TbNoInputHint.Text = GetNoInputHint(type);
@@ -162,8 +172,6 @@ public partial class ButtonEditWindow : Window
         "discord_mute"        => "Schaltet das Mikrofon in Discord stumm oder ein.",
         "discord_deafen"      => "Aktiviert / deaktiviert das Deafen in Discord.",
         "discord_leave"       => "Verlässt den aktuellen Discord-Sprachkanal.",
-        "discord_video"       => "Schaltet die Kamera in Discord ein oder aus.\nHinweis: Funktioniert nur im aktiven Voice-Call.",
-        "discord_screenshare" => "Startet oder beendet den Screen-Share in Discord.\nHinweis: Funktioniert nur im aktiven Voice-Call.",
         "none"                => "Dieser Button hat keine Aktion.",
         _ => "",
     };
@@ -212,6 +220,10 @@ public partial class ButtonEditWindow : Window
                 break;
             case "discord_join":
                 action.Value = TbDiscordChannelId.Text.Trim();
+                break;
+            case "discord_video":
+            case "discord_screenshare":
+                action.Value = TbDiscordKey.Text.Trim().ToLower();
                 break;
         }
 

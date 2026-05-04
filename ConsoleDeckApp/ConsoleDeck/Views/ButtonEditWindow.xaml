@@ -329,6 +329,15 @@
                       FontSize="13" Padding="10,7" Margin="0,0,0,14"/>
           </StackPanel>
 
+          <StackPanel x:Name="PanelDiscordKey" Visibility="Collapsed">
+            <TextBlock x:Name="TbDiscordKeyHint" Style="{StaticResource Hint}"/>
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Tastenkombination"/>
+            <TextBlock Style="{StaticResource Hint}"
+                       Text="Format: ctrl+shift+v  ·  Modifier: ctrl, shift, alt — dann Buchstabe/F-Taste"/>
+            <ui:TextBox x:Name="TbDiscordKey" Style="{StaticResource Input}"
+                        PlaceholderText="ctrl+shift+v"/>
+          </StackPanel>
+
           <StackPanel x:Name="PanelDiscordJoin" Visibility="Collapsed">
             <TextBlock Style="{StaticResource FieldLabel}" Text="Voice-Channel-ID"/>
             <TextBlock Style="{StaticResource Hint}"

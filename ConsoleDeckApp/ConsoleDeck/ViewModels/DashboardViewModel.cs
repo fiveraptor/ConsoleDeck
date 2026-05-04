@@ -64,7 +64,9 @@ public partial class ButtonViewModel : ObservableObject
     {
         "exe"            => Shorten(a.Focus?.Length > 0 ? a.Focus : a.Value),
         "homeassistant"  => $"{Shorten(a.Value, 12)} {a.HaAction ?? "toggle"}",
-        "discord_join"   => a.Value.Length > 0 ? $"ID …{a.Value[^Math.Min(6, a.Value.Length)..]}" : "",
+        "discord_join"        => a.Value.Length > 0 ? $"ID …{a.Value[^Math.Min(6, a.Value.Length)..]}" : "",
+        "discord_video"       => Shorten(a.Value),
+        "discord_screenshare" => Shorten(a.Value),
         _                => Shorten(a.Value),
     };
 

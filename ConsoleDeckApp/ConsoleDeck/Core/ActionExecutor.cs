@@ -40,8 +40,10 @@ public class ActionExecutor
             case "discord_mute":        _discord.ToggleMute(); break;
             case "discord_deafen":      _discord.ToggleDeafen(); break;
             case "discord_leave":       _discord.LeaveChannel(); break;
-            case "discord_video":       _discord.ToggleVideo(); break;
-            case "discord_screenshare": _discord.ToggleScreenShare(); break;
+            case "discord_video" when action.Value.Length > 0:
+                SimulateHotkey(action.Value); break;
+            case "discord_screenshare" when action.Value.Length > 0:
+                SimulateHotkey(action.Value); break;
             case "discord_join" when action.Value.Length > 0:
                 _discord.JoinChannel(action.Value);
                 break;
