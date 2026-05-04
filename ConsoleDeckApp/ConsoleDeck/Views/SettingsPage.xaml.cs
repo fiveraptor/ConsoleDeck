@@ -34,7 +34,7 @@ public partial class SettingsPage : Page
     {
         var enabled = AutostartToggle.IsChecked == true;
         AutostartService.SetEnabled(enabled);
-        ShowToast(enabled ? "Autostart aktiviert." : "Autostart deaktiviert.");
+        ShowToast(enabled ? "Autostart enabled." : "Autostart disabled.");
     }
 
     private void OnDiscordStatusChanged(DiscordStatus status)
@@ -48,13 +48,13 @@ public partial class SettingsPage : Page
         bool dark = ThemeService.IsDark;
         (DiscordStatusText.Text, DiscordStatusBadge.Background, DiscordStatusText.Foreground) = status switch
         {
-            DiscordStatus.Connected  => ("Verbunden",
+            DiscordStatus.Connected  => ("Connected",
                 Brush(dark ? (30, 70, 40)   : (223, 246, 221)),
                 Brush(dark ? (100, 210, 120) : (16, 124, 16))),
-            DiscordStatus.Connecting => ("Verbindet…",
+            DiscordStatus.Connecting => ("Connecting…",
                 Brush(dark ? (60, 50, 20)   : (255, 244, 206)),
                 Brush(dark ? (210, 170, 60)  : (131, 92, 0))),
-            _                        => ("Nicht verbunden",
+            _                        => ("Disconnected",
                 Brush(dark ? (50, 50, 50)   : (243, 243, 243)),
                 Brush(dark ? (140, 140, 140) : (92, 92, 92))),
         };
@@ -77,7 +77,7 @@ public partial class SettingsPage : Page
             existing.RefreshToken = null;
         }
         App.Config.SaveDiscordAuth(existing);
-        ShowToast("Discord-Einstellungen gespeichert. Discord-Popup bestätigen…");
+        ShowToast("Discord settings saved. Confirm the Discord popup…");
 
         if (!string.IsNullOrEmpty(newId))
         {
@@ -96,20 +96,20 @@ public partial class SettingsPage : Page
             Token = PbHaToken.Password,
         });
         HaTestResult.Text = "";
-        ShowToast("Home Assistant Einstellungen gespeichert.");
+        ShowToast("Home Assistant settings saved.");
     }
 
     private async void TestHa_Click(object sender, RoutedEventArgs e)
     {
         bool dark = ThemeService.IsDark;
-        HaTestResult.Text       = "Teste…";
+        HaTestResult.Text       = "Testing…";
         HaTestResult.Foreground = Brush(dark ? (140, 140, 140) : (92, 92, 92));
 
         var ok = await App.HomeAssistant.TestConnectionAsync(
             TbHaUrl.Text.Trim().TrimEnd('/'),
             PbHaToken.Password);
 
-        HaTestResult.Text       = ok ? "✓ Verbunden" : "✗ Fehler";
+        HaTestResult.Text       = ok ? "✓ Connected" : "✗ Error";
         HaTestResult.Foreground = ok
             ? Brush(dark ? (100, 210, 120) : (16, 124, 16))
             : Brush(dark ? (210, 90, 90)   : (168, 0, 0));

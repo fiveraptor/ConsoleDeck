@@ -19,7 +19,7 @@ public partial class ButtonEditWindow : Window
         _buttonNumber = buttonNumber;
         _buttonKey = $"BUTTON_{buttonNumber}";
         InitializeComponent();
-        TitleText.Text = $"Button {buttonNumber} konfigurieren";
+        TitleText.Text = $"Configure button {buttonNumber}";
         LoadAudioDevices();
         LoadCurrentAction();
     }
@@ -156,15 +156,15 @@ public partial class ButtonEditWindow : Window
 
     private static string GetNoInputHint(string type) => type switch
     {
-        "play_pause"     => "Sendet den Play/Pause-Medienkey.",
-        "next_track"     => "Sendet den 'Nächster Titel'-Medienkey.",
-        "prev_track"     => "Sendet den 'Vorheriger Titel'-Medienkey.",
-        "stop"           => "Sendet den Stop-Medienkey.",
-        "mute"           => "Schaltet die System-Stummschaltung ein/aus.",
-        "discord_mute"        => "Schaltet das Mikrofon in Discord stumm oder ein.",
-        "discord_deafen"      => "Aktiviert / deaktiviert das Deafen in Discord.",
-        "discord_leave"       => "Verlässt den aktuellen Discord-Sprachkanal.",
-        "none"                => "Dieser Button hat keine Aktion.",
+        "play_pause"     => "Sends the play/pause media key.",
+        "next_track"     => "Sends the next track media key.",
+        "prev_track"     => "Sends the previous track media key.",
+        "stop"           => "Sends the stop media key.",
+        "mute"           => "Toggles system mute.",
+        "discord_mute"   => "Toggles the Discord microphone.",
+        "discord_deafen" => "Toggles Discord deafen.",
+        "discord_leave"  => "Leaves the current Discord voice channel.",
+        "none"           => "This button has no action.",
         _ => "",
     };
 
@@ -172,8 +172,8 @@ public partial class ButtonEditWindow : Window
     {
         var dlg = new OpenFileDialog
         {
-            Filter = "Ausführbare Dateien|*.exe;*.lnk;*.bat;*.cmd|Alle Dateien|*.*",
-            Title = "Datei auswählen",
+            Filter = "Executable files|*.exe;*.lnk;*.bat;*.cmd|All files|*.*",
+            Title = "Select file",
         };
         if (dlg.ShowDialog(this) == true)
             TbExePath.Text = dlg.FileName;

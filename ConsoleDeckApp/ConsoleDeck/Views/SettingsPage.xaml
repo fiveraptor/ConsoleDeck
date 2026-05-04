@@ -223,9 +223,9 @@
 
       <!-- Page title -->
       <StackPanel Margin="0,0,0,22">
-        <TextBlock Text="Einstellungen" FontSize="22" FontWeight="SemiBold"
+        <TextBlock Text="Settings" FontSize="22" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrTextPrimary}"/>
-        <TextBlock Text="Dienste konfigurieren" FontSize="12"
+        <TextBlock Text="Configure services" FontSize="12"
                    Foreground="{DynamicResource BrTextSecondary}" Margin="0,4,0,0"/>
       </StackPanel>
 
@@ -239,7 +239,7 @@
           <StackPanel Grid.Column="0" VerticalAlignment="Center">
             <TextBlock Style="{StaticResource CardTitle}" Text="Autostart"/>
             <TextBlock Style="{StaticResource Hint}" Margin="0,5,0,0"
-                       Text="ConsoleDeck automatisch mit Windows starten — startet still im Hintergrund, kein Fenster."/>
+                       Text="Start ConsoleDeck with Windows — runs silently in the background, no window."/>
           </StackPanel>
           <ToggleButton x:Name="AutostartToggle" Grid.Column="1"
                         Style="{StaticResource ToggleSwitch}"
@@ -261,7 +261,7 @@
                     VerticalAlignment="Center"
                     Background="{DynamicResource BrPageBg}"
                     BorderBrush="{DynamicResource BrCardBorder}" BorderThickness="1">
-              <TextBlock x:Name="DiscordStatusText" Text="Nicht verbunden" FontSize="11"
+              <TextBlock x:Name="DiscordStatusText" Text="Disconnected" FontSize="11"
                          Foreground="{DynamicResource BrTextSecondary}"/>
             </Border>
           </Grid>
@@ -274,9 +274,9 @@
           <PasswordBox x:Name="PbDiscordSecret" Style="{StaticResource PassInput}"/>
 
           <TextBlock Style="{StaticResource Hint}"
-                     Text="Client ID und Secret unter discord.com/developers/applications → deine App → OAuth2.&#x0a;Redirect URI eintragen: http://localhost&#x0a;Nach dem Speichern erscheint ein Autorisierungs-Popup in Discord — bestätigen."/>
+                     Text="Client ID and Secret at discord.com/developers/applications → your app → OAuth2.&#x0a;Add redirect URI: http://localhost&#x0a;After saving, confirm the Discord authorization popup."/>
 
-          <Button Content="Speichern" Style="{StaticResource AccentBtn}"
+          <Button Content="Save" Style="{StaticResource AccentBtn}"
                   HorizontalAlignment="Right" Click="SaveDiscord_Click"/>
         </StackPanel>
       </Border>
@@ -294,7 +294,7 @@
           <PasswordBox x:Name="PbHaToken" Style="{StaticResource PassInput}"/>
 
           <TextBlock Style="{StaticResource Hint}"
-                     Text="Token erstellen: Home Assistant → Profil → Sicherheit → Langlebiges Zugriffstoken."/>
+                     Text="Create token: Home Assistant → Profile → Security → Long-Lived Access Token."/>
 
           <Grid>
             <Grid.ColumnDefinitions>
@@ -304,9 +304,9 @@
             <TextBlock x:Name="HaTestResult" Grid.Column="0" VerticalAlignment="Center"
                        FontSize="12" Foreground="{DynamicResource BrTextSecondary}"/>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
-              <Button Content="Verbindung testen" Style="{StaticResource GhostBtn}"
+              <Button Content="Test Connection" Style="{StaticResource GhostBtn}"
                       Margin="0,0,10,0" Click="TestHa_Click"/>
-              <Button Content="Speichern" Style="{StaticResource AccentBtn}"
+              <Button Content="Save" Style="{StaticResource AccentBtn}"
                       Click="SaveHa_Click"/>
             </StackPanel>
           </Grid>

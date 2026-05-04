@@ -84,39 +84,39 @@ public partial class MainWindow : Window
 
     private void BtnAddProfile_Click(object sender, RoutedEventArgs e)
     {
-        var dlg = new Views.ProfileNameDialog("Neues Profil", "") { Owner = this };
+        var dlg = new Views.ProfileNameDialog("New Profile", "") { Owner = this };
         if (dlg.ShowDialog() != true || string.IsNullOrWhiteSpace(dlg.ProfileName)) return;
         var name = dlg.ProfileName;
         App.Config.CreateProfile(name);
         App.Config.SetActiveProfile(name);
         LoadProfiles();
-        ShowToast($"Profil \"{name}\" erstellt.");
+        ShowToast($"Profile \"{name}\" created.");
     }
 
     private void BtnRenameProfile_Click(object sender, RoutedEventArgs e)
     {
         var current = App.Config.GetActiveProfile();
-        var dlg = new Views.ProfileNameDialog("Profil umbenennen", current) { Owner = this };
+        var dlg = new Views.ProfileNameDialog("Rename Profile", current) { Owner = this };
         if (dlg.ShowDialog() != true || string.IsNullOrWhiteSpace(dlg.ProfileName)) return;
         var newName = dlg.ProfileName;
         if (newName == current) return;
         App.Config.RenameProfile(current, newName);
         LoadProfiles();
-        ShowToast($"Profil in \"{newName}\" umbenannt.");
+        ShowToast($"Profile renamed to \"{newName}\".");
     }
 
     private void BtnDeleteProfile_Click(object sender, RoutedEventArgs e)
     {
         var profiles = App.Config.GetProfiles();
-        if (profiles.Count <= 1) { ShowToast("Das letzte Profil kann nicht gelöscht werden."); return; }
+        if (profiles.Count <= 1) { ShowToast("Cannot delete the last profile."); return; }
         var current = App.Config.GetActiveProfile();
-        var dlg = new Views.ConfirmDialog("Profil löschen", $"Profil \"{current}\" wirklich löschen?") { Owner = this };
+        var dlg = new Views.ConfirmDialog("Delete Profile", $"Delete profile \"{current}\"?") { Owner = this };
         if (dlg.ShowDialog() != true) return;
         var next = profiles.First(p => p != current);
         App.Config.SetActiveProfile(next);
         App.Config.DeleteProfile(current);
         LoadProfiles();
-        ShowToast($"Profil \"{current}\" gelöscht.");
+        ShowToast($"Profile \"{current}\" deleted.");
     }
 
     // ───────────────────────────────────────────────────────────────────────
@@ -156,15 +156,15 @@ public partial class MainWindow : Window
             {
                 ConnectionState.Connected =>
                     (Led(dark, 100, 210, 120, 40, 160, 60),
-                     "Arduino: Verbunden",
+                     "Arduino: Connected",
                      Led(dark, 100, 210, 120, 40, 160, 60)),
                 ConnectionState.Searching =>
                     (Led(dark, 210, 170, 60, 160, 120, 0),
-                     "Arduino: Suche...",
+                     "Arduino: Searching…",
                      Led(dark, 210, 170, 60, 130, 95, 0)),
                 _ =>
                     (Led(dark, 140, 140, 140, 100, 100, 100),
-                     "Arduino: Getrennt",
+                     "Arduino: Disconnected",
                      Led(dark, 140, 140, 140, 100, 100, 100)),
             };
         });
@@ -179,15 +179,15 @@ public partial class MainWindow : Window
             {
                 DiscordStatus.Connected =>
                     (Led(dark, 100, 210, 120, 40, 160, 60),
-                     "Discord: Verbunden",
+                     "Discord: Connected",
                      Led(dark, 100, 210, 120, 40, 160, 60)),
                 DiscordStatus.Connecting =>
                     (Led(dark, 210, 170, 60, 160, 120, 0),
-                     "Discord: Verbindet...",
+                     "Discord: Connecting…",
                      Led(dark, 210, 170, 60, 130, 95, 0)),
                 _ =>
                     (Led(dark, 140, 140, 140, 100, 100, 100),
-                     "Discord: Nicht verbunden",
+                     "Discord: Disconnected",
                      Led(dark, 140, 140, 140, 100, 100, 100)),
             };
         });

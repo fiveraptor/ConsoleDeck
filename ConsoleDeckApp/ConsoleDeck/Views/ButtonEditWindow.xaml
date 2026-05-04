@@ -211,34 +211,34 @@
           <StackPanel Margin="6,10">
             <TextBlock Style="{StaticResource CatHeader}" Text="LAUNCH"/>
             <RadioButton x:Name="RbLink"   Style="{StaticResource TypeRadio}" Content="Link (URL)"       Tag="link"           Checked="TypeChanged"/>
-            <RadioButton x:Name="RbExe"    Style="{StaticResource TypeRadio}" Content="Datei / App"      Tag="exe"            Checked="TypeChanged"/>
+            <RadioButton x:Name="RbExe"    Style="{StaticResource TypeRadio}" Content="File / App"       Tag="exe"            Checked="TypeChanged"/>
 
             <TextBlock Style="{StaticResource CatHeader}" Text="MEDIA"/>
             <RadioButton x:Name="RbPlay"   Style="{StaticResource TypeRadio}" Content="Play / Pause"     Tag="play_pause"     Checked="TypeChanged"/>
-            <RadioButton x:Name="RbNext"   Style="{StaticResource TypeRadio}" Content="Nächster Titel"   Tag="next_track"     Checked="TypeChanged"/>
-            <RadioButton x:Name="RbPrev"   Style="{StaticResource TypeRadio}" Content="Vorheriger Titel" Tag="prev_track"     Checked="TypeChanged"/>
+            <RadioButton x:Name="RbNext"   Style="{StaticResource TypeRadio}" Content="Next Track"       Tag="next_track"     Checked="TypeChanged"/>
+            <RadioButton x:Name="RbPrev"   Style="{StaticResource TypeRadio}" Content="Previous Track"   Tag="prev_track"     Checked="TypeChanged"/>
             <RadioButton x:Name="RbStop"   Style="{StaticResource TypeRadio}" Content="Stop"             Tag="stop"           Checked="TypeChanged"/>
 
             <TextBlock Style="{StaticResource CatHeader}" Text="SYSTEM"/>
             <RadioButton x:Name="RbMute"   Style="{StaticResource TypeRadio}" Content="System Mute"      Tag="mute"           Checked="TypeChanged"/>
-            <RadioButton x:Name="RbHotkey" Style="{StaticResource TypeRadio}" Content="Tastenkürzel"     Tag="hotkey"         Checked="TypeChanged"/>
+            <RadioButton x:Name="RbHotkey" Style="{StaticResource TypeRadio}" Content="Hotkey"           Tag="hotkey"         Checked="TypeChanged"/>
 
             <TextBlock Style="{StaticResource CatHeader}" Text="DISCORD"/>
             <RadioButton x:Name="RbDMute"   Style="{StaticResource TypeRadio}" Content="Mute / Unmute"       Tag="discord_mute"        Checked="TypeChanged"/>
             <RadioButton x:Name="RbDDeaf"   Style="{StaticResource TypeRadio}" Content="Deafen / Undeafen"   Tag="discord_deafen"      Checked="TypeChanged"/>
-            <RadioButton x:Name="RbDLeave"  Style="{StaticResource TypeRadio}" Content="Channel verlassen"   Tag="discord_leave"       Checked="TypeChanged"/>
+            <RadioButton x:Name="RbDLeave"  Style="{StaticResource TypeRadio}" Content="Leave Channel"       Tag="discord_leave"       Checked="TypeChanged"/>
 
-            <RadioButton x:Name="RbDJoin"   Style="{StaticResource TypeRadio}" Content="Channel beitreten"   Tag="discord_join"        Checked="TypeChanged"/>
+            <RadioButton x:Name="RbDJoin"   Style="{StaticResource TypeRadio}" Content="Join Channel"        Tag="discord_join"        Checked="TypeChanged"/>
 
             <TextBlock Style="{StaticResource CatHeader}" Text="HOME ASSISTANT"/>
             <RadioButton x:Name="RbHa"     Style="{StaticResource TypeRadio}" Content="Home Assistant"   Tag="homeassistant"  Checked="TypeChanged"/>
 
             <TextBlock Style="{StaticResource CatHeader}" Text="AUDIO"/>
-            <RadioButton x:Name="RbAudioDev"    Style="{StaticResource TypeRadio}" Content="Gerät setzen"   Tag="audio_device" Checked="TypeChanged"/>
-            <RadioButton x:Name="RbAudioToggle" Style="{StaticResource TypeRadio}" Content="Gerät wechseln" Tag="audio_toggle" Checked="TypeChanged"/>
+            <RadioButton x:Name="RbAudioDev"    Style="{StaticResource TypeRadio}" Content="Set Device"     Tag="audio_device" Checked="TypeChanged"/>
+            <RadioButton x:Name="RbAudioToggle" Style="{StaticResource TypeRadio}" Content="Toggle Devices" Tag="audio_toggle" Checked="TypeChanged"/>
 
-            <TextBlock Style="{StaticResource CatHeader}" Text="SONSTIGES"/>
-            <RadioButton x:Name="RbNone"   Style="{StaticResource TypeRadio}" Content="Keine Aktion"     Tag="none"           Checked="TypeChanged"/>
+            <TextBlock Style="{StaticResource CatHeader}" Text="OTHER"/>
+            <RadioButton x:Name="RbNone"   Style="{StaticResource TypeRadio}" Content="No Action"        Tag="none"           Checked="TypeChanged"/>
           </StackPanel>
         </ScrollViewer>
       </Border>
@@ -255,29 +255,29 @@
           </StackPanel>
 
           <StackPanel x:Name="PanelExe" Visibility="Collapsed">
-            <TextBlock Style="{StaticResource FieldLabel}" Text="Pfad zur Datei oder Verknüpfung"/>
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Path to file or shortcut"/>
             <Grid Margin="0,0,0,14">
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
               </Grid.ColumnDefinitions>
               <ui:TextBox x:Name="TbExePath" Style="{StaticResource Input}" Margin="0"
-                          PlaceholderText="C:\Programme\App\app.exe"/>
+                          PlaceholderText="C:\Program Files\App\app.exe"/>
               <Button Grid.Column="1" Content="…" Margin="8,0,0,0" Padding="12,7"
                       Style="{StaticResource GhostBtn}" Click="BrowseExe_Click"/>
             </Grid>
             <TextBlock Style="{StaticResource FieldLabel}"
-                       Text="Fensterfokus-Hinweis (optional)" Margin="0,2,0,5"/>
+                       Text="Window focus hint (optional)" Margin="0,2,0,5"/>
             <TextBlock Style="{StaticResource Hint}"
-                       Text="Ein Wort aus dem Fenstertitel. Wenn das Fenster offen ist, wird es fokussiert statt neu geöffnet."/>
+                       Text="A word from the window title. If the window is open, it gets focused instead of relaunched."/>
             <ui:TextBox x:Name="TbFocus" Style="{StaticResource Input}"
-                        PlaceholderText="z.B. Chrome, Notepad …"/>
+                        PlaceholderText="e.g. Chrome, Notepad …"/>
           </StackPanel>
 
           <StackPanel x:Name="PanelHotkey" Visibility="Collapsed">
-            <TextBlock Style="{StaticResource FieldLabel}" Text="Tastenkombination"/>
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Key combination"/>
             <TextBlock Style="{StaticResource Hint}"
-                       Text="Format: ctrl+shift+m  ·  ctrl+alt+d&#x0a;Modifier: ctrl, shift, alt, win — Tasten: F1–F12, Buchstaben, Zahlen"/>
+                       Text="Format: ctrl+shift+m  ·  ctrl+alt+d&#x0a;Modifiers: ctrl, shift, alt, win — Keys: F1–F12, letters, numbers"/>
             <ui:TextBox x:Name="TbHotkey" Style="{StaticResource Input}"
                         PlaceholderText="ctrl+shift+m"/>
           </StackPanel>
@@ -285,10 +285,10 @@
           <StackPanel x:Name="PanelHa" Visibility="Collapsed">
             <TextBlock Style="{StaticResource FieldLabel}" Text="Entity ID"/>
             <TextBlock Style="{StaticResource Hint}"
-                       Text="Home Assistant → Einstellungen → Geräte &amp; Dienste → Entity-ID"/>
+                       Text="Home Assistant → Settings → Devices &amp; Services → Entity ID"/>
             <ui:TextBox x:Name="TbEntityId" Style="{StaticResource Input}"
-                        PlaceholderText="light.wohnzimmer"/>
-            <TextBlock Style="{StaticResource FieldLabel}" Text="Aktion" Margin="0,2,0,5"/>
+                        PlaceholderText="light.living_room"/>
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Action" Margin="0,2,0,5"/>
             <ComboBox x:Name="CbHaAction"
                       Background="{DynamicResource BrInputBg}"
                       Foreground="{DynamicResource BrTextPrimary}"
@@ -301,9 +301,9 @@
           </StackPanel>
 
           <StackPanel x:Name="PanelAudioDevice" Visibility="Collapsed">
-            <TextBlock Style="{StaticResource FieldLabel}" Text="Audiogerät"/>
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Audio Device"/>
             <TextBlock Style="{StaticResource Hint}"
-                       Text="Klick auf den Button setzt dieses Gerät als Standard-Audioausgang."/>
+                       Text="Pressing this button sets the selected device as the default audio output."/>
             <ComboBox x:Name="CbAudioDevice"
                       Background="{DynamicResource BrInputBg}"
                       Foreground="{DynamicResource BrTextPrimary}"
@@ -313,14 +313,14 @@
 
           <StackPanel x:Name="PanelAudioToggle" Visibility="Collapsed">
             <TextBlock Style="{StaticResource Hint}"
-                       Text="Wechselt abwechselnd zwischen zwei Audiogeräten."/>
-            <TextBlock Style="{StaticResource FieldLabel}" Text="Gerät 1"/>
+                       Text="Alternates between two audio output devices."/>
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Device 1"/>
             <ComboBox x:Name="CbAudioToggle1"
                       Background="{DynamicResource BrInputBg}"
                       Foreground="{DynamicResource BrTextPrimary}"
                       BorderBrush="{DynamicResource BrInputBorder}"
                       FontSize="13" Padding="10,7" Margin="0,0,0,14"/>
-            <TextBlock Style="{StaticResource FieldLabel}" Text="Gerät 2"/>
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Device 2"/>
             <ComboBox x:Name="CbAudioToggle2"
                       Background="{DynamicResource BrInputBg}"
                       Foreground="{DynamicResource BrTextPrimary}"
@@ -330,9 +330,9 @@
 
 
           <StackPanel x:Name="PanelDiscordJoin" Visibility="Collapsed">
-            <TextBlock Style="{StaticResource FieldLabel}" Text="Voice-Channel-ID"/>
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Voice Channel ID"/>
             <TextBlock Style="{StaticResource Hint}"
-                       Text="Rechtsklick auf den Channel in Discord → ID kopieren.&#x0a;Voraussetzung: Einstellungen → Erscheinungsbild → Entwicklermodus aktivieren."/>
+                       Text="Right-click the channel in Discord → Copy ID.&#x0a;Requires Developer Mode: Settings → Appearance → Developer Mode."/>
             <ui:TextBox x:Name="TbDiscordChannelId" Style="{StaticResource Input}"
                         PlaceholderText="123456789012345678"/>
           </StackPanel>
@@ -351,9 +351,9 @@
     <Border Grid.Row="2" Background="{DynamicResource BrSidebarBg}" Padding="22,14"
             BorderBrush="{DynamicResource BrDivider}" BorderThickness="0,1,0,0">
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-        <Button Content="Abbrechen" Style="{StaticResource GhostBtn}" Margin="0,0,10,0"
+        <Button Content="Cancel" Style="{StaticResource GhostBtn}" Margin="0,0,10,0"
                 Click="Cancel_Click"/>
-        <Button Content="Speichern" Style="{StaticResource AccentBtn}" Click="Save_Click"/>
+        <Button Content="Save" Style="{StaticResource AccentBtn}" Click="Save_Click"/>
       </StackPanel>
     </Border>
   </Grid>

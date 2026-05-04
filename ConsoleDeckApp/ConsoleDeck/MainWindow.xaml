@@ -116,12 +116,12 @@
                     Margin="0,0,4,0"
                     SelectionChanged="ProfileCombo_SelectionChanged"/>
           <Button Grid.Column="1" Content="+" Style="{StaticResource SidebarIconBtn}"
-                  ToolTip="Neues Profil" Click="BtnAddProfile_Click"/>
+                  ToolTip="New profile" Click="BtnAddProfile_Click"/>
           <Button Grid.Column="2" Content="✎" Style="{StaticResource SidebarIconBtn}"
-                  ToolTip="Umbenennen" Click="BtnRenameProfile_Click"/>
+                  ToolTip="Rename" Click="BtnRenameProfile_Click"/>
           <Button x:Name="BtnDeleteProfile" Grid.Column="3" Content="✕"
                   Style="{StaticResource SidebarIconBtn}"
-                  ToolTip="Löschen" Click="BtnDeleteProfile_Click"/>
+                  ToolTip="Delete" Click="BtnDeleteProfile_Click"/>
         </Grid>
       </Border>
 
@@ -139,7 +139,7 @@
         <ListBoxItem Tag="settings">
           <StackPanel Orientation="Horizontal">
             <ui:SymbolIcon Symbol="Settings24" FontSize="16" Margin="0,0,11,0" VerticalAlignment="Center"/>
-            <TextBlock Text="Einstellungen" VerticalAlignment="Center" FontSize="13"/>
+            <TextBlock Text="Settings" VerticalAlignment="Center" FontSize="13"/>
           </StackPanel>
         </ListBoxItem>
       </ListBox>
@@ -152,7 +152,7 @@
             <Ellipse x:Name="ArduinoLed" Width="7" Height="7"
                      Fill="{DynamicResource BrTextHint}"
                      Margin="0,0,8,0" VerticalAlignment="Center"/>
-            <TextBlock x:Name="ArduinoStatus" Text="Arduino: Suche…"
+            <TextBlock x:Name="ArduinoStatus" Text="Arduino: Searching…"
                        Foreground="{DynamicResource BrTextSecondary}"
                        FontSize="11" VerticalAlignment="Center"/>
           </StackPanel>
@@ -160,7 +160,7 @@
             <Ellipse x:Name="DiscordLed" Width="7" Height="7"
                      Fill="{DynamicResource BrTextHint}"
                      Margin="0,0,8,0" VerticalAlignment="Center"/>
-            <TextBlock x:Name="DiscordStatusBar" Text="Discord: Getrennt"
+            <TextBlock x:Name="DiscordStatusBar" Text="Discord: Disconnected"
                        Foreground="{DynamicResource BrTextSecondary}"
                        FontSize="11" VerticalAlignment="Center"/>
           </StackPanel>

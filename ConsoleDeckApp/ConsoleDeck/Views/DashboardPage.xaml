@@ -24,7 +24,7 @@
                   <Border x:Name="EditHint" CornerRadius="0,0,8,8"
                           Background="#F0F6FF" VerticalAlignment="Bottom"
                           Padding="0,7" Opacity="0" IsHitTestVisible="False">
-                    <TextBlock Text="✎  bearbeiten" FontSize="11" Foreground="#0078D4"
+                    <TextBlock Text="✎  edit" FontSize="11" Foreground="#0078D4"
                                HorizontalAlignment="Center" FontWeight="Medium"/>
                   </Border>
                 </Grid>
@@ -84,7 +84,7 @@
     <StackPanel Grid.Row="0">
       <TextBlock Text="Dashboard" FontSize="22" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrTextPrimary}"/>
-      <TextBlock Text="9 konfigurierbare Tasten — klicken zum Bearbeiten"
+      <TextBlock Text="9 configurable buttons — click to edit"
                  FontSize="12" Foreground="{DynamicResource BrTextSecondary}" Margin="0,4,0,0"/>
     </StackPanel>
 
@@ -138,7 +138,7 @@
 
     <!-- Footer -->
     <TextBlock Grid.Row="3" Margin="6,14,0,0"
-               Text="⌨  Media-Taste (physisch) → immer Play/Pause, nicht konfigurierbar"
+               Text="⌨  Media button (physical) → always play/pause, not configurable"
                FontSize="11" Foreground="{DynamicResource BrTextHint}"/>
   </Grid>
 </Page>

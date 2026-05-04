@@ -7,7 +7,7 @@ namespace ConsoleDeck.Views;
 
 public partial class ConfirmDialog : Window
 {
-    public ConfirmDialog(string title, string message, string confirmText = "Löschen")
+    public ConfirmDialog(string title, string message, string confirmText = "Delete")
     {
         InitializeComponent();
         TitleText.Text   = title;
