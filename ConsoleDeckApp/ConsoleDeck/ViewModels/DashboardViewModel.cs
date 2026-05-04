@@ -65,8 +65,7 @@ public partial class ButtonViewModel : ObservableObject
         "exe"            => Shorten(a.Focus?.Length > 0 ? a.Focus : a.Value),
         "homeassistant"  => $"{Shorten(a.Value, 12)} {a.HaAction ?? "toggle"}",
         "discord_join"        => a.Value.Length > 0 ? $"ID …{a.Value[^Math.Min(6, a.Value.Length)..]}" : "",
-        "discord_video"       => Shorten(a.Value),
-        "discord_screenshare" => Shorten(a.Value),
+
         _                => Shorten(a.Value),
     };
 
@@ -83,7 +82,7 @@ public partial class ButtonViewModel : ObservableObject
         ["play_pause"] = "PLAY", ["next_track"] = "NEXT", ["prev_track"] = "PREV", ["stop"] = "STOP",
         ["mute"] = "MUTE", ["hotkey"] = "KEY",
         ["discord_mute"] = "MUTE", ["discord_deafen"] = "DEAF", ["discord_leave"] = "LEAVE",
-        ["discord_video"] = "CAM", ["discord_screenshare"] = "STREAM", ["discord_join"] = "JOIN",
+        ["discord_join"] = "JOIN",
         ["homeassistant"] = "HA",
         ["audio_device"] = "AUDIO", ["audio_toggle"] = "AUDIO",
         ["none"] = "NONE",
@@ -95,7 +94,7 @@ public partial class ButtonViewModel : ObservableObject
         ["play_pause"] = "#3366CC", ["next_track"] = "#3366CC", ["prev_track"] = "#3366CC", ["stop"] = "#3366CC",
         ["mute"] = "#9933CC", ["hotkey"] = "#CCAA00",
         ["discord_mute"] = "#7B68EE", ["discord_deafen"] = "#7B68EE", ["discord_leave"] = "#CC3333",
-        ["discord_video"] = "#5B9BD5", ["discord_screenshare"] = "#9B59B6", ["discord_join"] = "#27AE60",
+        ["discord_join"] = "#27AE60",
         ["homeassistant"] = "#FF9800",
         ["audio_device"] = "#00AABB", ["audio_toggle"] = "#00AABB",
         ["none"] = "#555555",

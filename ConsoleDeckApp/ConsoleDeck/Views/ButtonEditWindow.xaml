@@ -227,8 +227,7 @@
             <RadioButton x:Name="RbDMute"   Style="{StaticResource TypeRadio}" Content="Mute / Unmute"       Tag="discord_mute"        Checked="TypeChanged"/>
             <RadioButton x:Name="RbDDeaf"   Style="{StaticResource TypeRadio}" Content="Deafen / Undeafen"   Tag="discord_deafen"      Checked="TypeChanged"/>
             <RadioButton x:Name="RbDLeave"  Style="{StaticResource TypeRadio}" Content="Channel verlassen"   Tag="discord_leave"       Checked="TypeChanged"/>
-            <RadioButton x:Name="RbDVideo"  Style="{StaticResource TypeRadio}" Content="Kamera ein/aus"      Tag="discord_video"       Checked="TypeChanged"/>
-            <RadioButton x:Name="RbDStream" Style="{StaticResource TypeRadio}" Content="Screenshare ein/aus" Tag="discord_screenshare" Checked="TypeChanged"/>
+
             <RadioButton x:Name="RbDJoin"   Style="{StaticResource TypeRadio}" Content="Channel beitreten"   Tag="discord_join"        Checked="TypeChanged"/>
 
             <TextBlock Style="{StaticResource CatHeader}" Text="HOME ASSISTANT"/>
@@ -329,14 +328,6 @@
                       FontSize="13" Padding="10,7" Margin="0,0,0,14"/>
           </StackPanel>
 
-          <StackPanel x:Name="PanelDiscordKey" Visibility="Collapsed">
-            <TextBlock x:Name="TbDiscordKeyHint" Style="{StaticResource Hint}"/>
-            <TextBlock Style="{StaticResource FieldLabel}" Text="Tastenkombination"/>
-            <TextBlock Style="{StaticResource Hint}"
-                       Text="Format: ctrl+shift+v  ·  Modifier: ctrl, shift, alt — dann Buchstabe/F-Taste"/>
-            <ui:TextBox x:Name="TbDiscordKey" Style="{StaticResource Input}"
-                        PlaceholderText="ctrl+shift+v"/>
-          </StackPanel>
 
           <StackPanel x:Name="PanelDiscordJoin" Visibility="Collapsed">
             <TextBlock Style="{StaticResource FieldLabel}" Text="Voice-Channel-ID"/>

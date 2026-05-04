@@ -55,7 +55,6 @@ public partial class ButtonEditWindow : Window
         TbHotkey.Text = action.Value;
         TbEntityId.Text = action.Value;
         TbDiscordChannelId.Text = action.Value;
-        TbDiscordKey.Text = action.Value;
 
         var haAction = action.HaAction ?? "toggle";
         foreach (ComboBoxItem item in CbHaAction.Items)
@@ -96,7 +95,7 @@ public partial class ButtonEditWindow : Window
             ["play_pause"] = RbPlay, ["next_track"] = RbNext, ["prev_track"] = RbPrev, ["stop"] = RbStop,
             ["mute"] = RbMute, ["hotkey"] = RbHotkey,
             ["discord_mute"] = RbDMute, ["discord_deafen"] = RbDDeaf, ["discord_leave"] = RbDLeave,
-            ["discord_video"] = RbDVideo, ["discord_screenshare"] = RbDStream, ["discord_join"] = RbDJoin,
+            ["discord_join"] = RbDJoin,
             ["homeassistant"] = RbHa,
             ["audio_device"] = RbAudioDev, ["audio_toggle"] = RbAudioToggle,
             ["none"] = RbNone,
@@ -111,7 +110,7 @@ public partial class ButtonEditWindow : Window
     {
         var radios = new[] { RbLink, RbExe, RbPlay, RbNext, RbPrev, RbStop,
                              RbMute, RbHotkey, RbDMute, RbDDeaf, RbDLeave,
-                             RbDVideo, RbDStream, RbDJoin,
+                             RbDJoin,
                              RbHa, RbAudioDev, RbAudioToggle, RbNone };
         foreach (var rb in radios)
             if (rb.IsChecked == true)
@@ -134,7 +133,7 @@ public partial class ButtonEditWindow : Window
         PanelHa.Visibility           = Visibility.Collapsed;
         PanelAudioDevice.Visibility  = Visibility.Collapsed;
         PanelAudioToggle.Visibility  = Visibility.Collapsed;
-        PanelDiscordKey.Visibility   = Visibility.Collapsed;
+
         PanelDiscordJoin.Visibility  = Visibility.Collapsed;
         PanelNoInput.Visibility      = Visibility.Collapsed;
 
@@ -147,14 +146,7 @@ public partial class ButtonEditWindow : Window
             case "audio_device":      PanelAudioDevice.Visibility = Visibility.Visible; break;
             case "audio_toggle":      PanelAudioToggle.Visibility = Visibility.Visible; break;
             case "discord_join":      PanelDiscordJoin.Visibility = Visibility.Visible; break;
-            case "discord_video":
-                TbDiscordKeyHint.Text = "Discord: Einstellungen → Keybinds → Keybind hinzufügen → \"Kamera umschalten\".\nTrag hier dieselbe Kombination ein.";
-                PanelDiscordKey.Visibility = Visibility.Visible;
-                break;
-            case "discord_screenshare":
-                TbDiscordKeyHint.Text = "Discord: Einstellungen → Keybinds → Keybind hinzufügen → \"Go Live umschalten\".\nTrag hier dieselbe Kombination ein.";
-                PanelDiscordKey.Visibility = Visibility.Visible;
-                break;
+
             default:
                 PanelNoInput.Visibility = Visibility.Visible;
                 TbNoInputHint.Text = GetNoInputHint(type);
@@ -221,10 +213,7 @@ public partial class ButtonEditWindow : Window
             case "discord_join":
                 action.Value = TbDiscordChannelId.Text.Trim();
                 break;
-            case "discord_video":
-            case "discord_screenshare":
-                action.Value = TbDiscordKey.Text.Trim().ToLower();
-                break;
+
         }
 
         var config = App.Config.LoadConfig();
